@@ -1,11 +1,16 @@
 /* Verlen opening film for the Carrd site.
    A title screen asks the visitor to click (browsers only allow sound after a click),
    then the tour film plays full screen with a Skip button, and fades into the site.
-   Shown every time the page is opened (add ?nointro to the address to skip it while editing).
+   Once a visitor has watched it to the end or skipped it, this browser remembers that and
+   goes straight to the site, until the visitor clears their history / site data.
+   Add ?nointro to the address to skip it, or ?intro to see it again, while editing.
    Clicks on the letter and film are kept to this screen, so the site's own music and the
    walking mascots only start once the visitor is inside. */
 (function () {
+  var KEY = 'verlen-intro-seen';
   if (/[?&]nointro\b/.test(location.search)) return;
+  var force = /[?&]intro\b/.test(location.search);
+  try { if (!force && localStorage.getItem(KEY)) return; } catch (e) { /* storage blocked: show it */ }
 
   var me = document.currentScript && document.currentScript.src;
   var BASE = me ? me.replace(/[^\/]*$/, '') : 'https://cdn.jsdelivr.net/gh/EuDDDDD/verlen-pets@main/';
@@ -132,6 +137,7 @@
     function finish() {
       if (done) return;
       done = true;
+      try { localStorage.setItem(KEY, String(Date.now())); } catch (e) { /* ignore */ }
       box.classList.add('vl-out');
       var fade = setInterval(function () {
         try { video.volume = Math.max(0, video.volume - 0.08); } catch (e) { /* ignore */ }
