@@ -183,3 +183,151 @@
   if (document.body) build();
   else document.addEventListener('DOMContentLoaded', build);
 })();
+
+/* Welcome block on the home page: the emblem is stamped onto the page like a wax seal,
+   then the greeting is typed out like a typewriter. Runs once per page load, after the
+   opening film (or straight away when the film is not shown). */
+(function () {
+  if (/[?&]nowelcome\b/.test(location.search)) return;
+  try { if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return; } catch (e) { /* ignore */ }
+
+  var KEYS = ['致維倫的來訪者', 'Visitors of Verlen', '河岸燈火下的學院日常', 'Gaslit River'];
+  var root = document.documentElement;
+  root.classList.add('vl-wl');
+
+  var css = document.createElement('style');
+  css.textContent = [
+    'html.vl-wl body > *:not(#vl-intro) { visibility: hidden !important; }',
+    '.vl-wl-hide { opacity: 0 !important; }',
+    '.vl-caret { display: inline-block; width: .08em; min-width: 2px; height: 1em; margin-left: .06em; vertical-align: -.12em; background: currentColor; animation: vlCaret .8s steps(1) infinite; }',
+    '@keyframes vlCaret { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }',
+    '.vl-stamp { animation: vlStamp .62s cubic-bezier(.2,.9,.25,1) both; transform-origin: 50% 55%; }',
+    '@keyframes vlStamp { 0% { opacity: 0; transform: scale(2.1) rotate(-16deg); filter: blur(3px) drop-shadow(0 26px 22px rgba(0,0,0,.55)); }',
+    '  58% { opacity: 1; transform: scale(.93) rotate(2deg); filter: blur(0) drop-shadow(0 2px 2px rgba(0,0,0,.4)); }',
+    '  74% { transform: scale(1.035) rotate(-.8deg); } 100% { opacity: 1; transform: none; filter: none; } }',
+    '.vl-thud { animation: vlThud .32s ease-out; }',
+    '@keyframes vlThud { 0% { transform: translateY(0); } 30% { transform: translateY(3px); } 60% { transform: translateY(-1px); } 100% { transform: none; } }',
+    '.vl-ring { position: absolute; pointer-events: none; border-radius: 50%; border: 2px solid rgba(201,164,106,.75); box-shadow: 0 0 18px rgba(201,164,106,.35); animation: vlRing .9s ease-out forwards; }',
+    '@keyframes vlRing { 0% { opacity: .9; transform: scale(.85); } 100% { opacity: 0; transform: scale(1.45); } }'
+  ].join('\n');
+  (document.head || root).appendChild(css);
+
+  function findText(key) {
+    var list = document.querySelectorAll('h1, h2, h3, h4, p, [id^="text"]');
+    var best = null;
+    for (var i = 0; i < list.length; i++) {
+      var el = list[i];
+      if ((el.textContent || '').indexOf(key) < 0) continue;
+      if (!best || best.contains(el)) best = el;
+    }
+    return best;
+  }
+
+  function findEmblem(first) {
+    var imgs = document.querySelectorAll('img');
+    var pick = null;
+    var sec = first.closest('section, article') || document.body;
+    for (var i = 0; i < imgs.length; i++) {
+      var im = imgs[i];
+      if (!sec.contains(im)) continue;
+      if (im.compareDocumentPosition(first) & Node.DOCUMENT_POSITION_FOLLOWING) pick = im;
+    }
+    return pick;
+  }
+
+  /* every text piece of an element, emptied now and refilled one character at a time */
+  function prepare(el) {
+    var nodes = [];
+    var h = el.offsetHeight;
+    if (h) el.style.minHeight = h + 'px';   /* keep the space so nothing below jumps */
+    var walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null);
+    var n;
+    while ((n = walker.nextNode())) {
+      if (!n.nodeValue.trim()) continue;
+      nodes.push({ node: n, text: n.nodeValue });
+      n.nodeValue = '';
+    }
+    return { el: el, nodes: nodes };
+  }
+
+  function typeOut(item, done) {
+    var caret = document.createElement('span');
+    caret.className = 'vl-caret';
+    var ni = 0, ci = 0;
+    function step() {
+      if (ni >= item.nodes.length) {
+        setTimeout(function () { caret.remove(); item.el.style.minHeight = ''; done(); }, 260);
+        return;
+      }
+      var cur = item.nodes[ni];
+      if (ci === 0) cur.node.parentNode.insertBefore(caret, cur.node.nextSibling);
+      var chars = Array.from(cur.text);
+      ci += 1;
+      cur.node.nodeValue = chars.slice(0, ci).join('');
+      var ch = chars[ci - 1] || '';
+      var wait = /[　-鿿＀-￯]/.test(ch) ? 80 : 24;
+      if (/[，。、！？：｜|,.:]/.test(ch)) wait += 120;
+      if (ch === ' ') wait = 30;
+      if (ci >= chars.length) { ni += 1; ci = 0; wait += 80; }
+      setTimeout(step, wait);
+    }
+    step();
+  }
+
+  function setup() {
+    var els = [];
+    KEYS.forEach(function (k) {
+      var el = findText(k);
+      if (el && els.indexOf(el) < 0) els.push(el);
+    });
+    if (!els.length) { root.classList.remove('vl-wl'); return; }
+    els.sort(function (a, b) { return a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1; });
+    var emblem = findEmblem(els[0]);
+    var items = els.map(prepare);
+    if (emblem) emblem.classList.add('vl-wl-hide');
+    root.classList.remove('vl-wl');
+
+    function visible() { return els[0].getClientRects().length > 0; }
+    function begin() {
+      if (!visible()) { setTimeout(begin, 250); return; }
+      var i = 0;
+      function next() {
+        if (i >= items.length) return;
+        var it = items[i++];
+        setTimeout(function () { typeOut(it, next); }, i === 1 ? 0 : 220);
+      }
+      if (emblem) {
+        emblem.classList.remove('vl-wl-hide');
+        emblem.classList.add('vl-stamp');
+        setTimeout(function () {
+          var host = emblem.parentNode;
+          var hostCs = getComputedStyle(host);
+          if (hostCs.position === 'static') host.style.position = 'relative';
+          var ring = document.createElement('span');
+          ring.className = 'vl-ring';
+          ring.style.left = emblem.offsetLeft + 'px';
+          ring.style.top = emblem.offsetTop + 'px';
+          ring.style.width = emblem.offsetWidth + 'px';
+          ring.style.height = emblem.offsetHeight + 'px';
+          host.appendChild(ring);
+          setTimeout(function () { ring.remove(); }, 1000);
+          var sec = emblem.closest('section, article, .container, .inner') || emblem.parentNode;
+          sec.classList.add('vl-thud');
+          setTimeout(function () { sec.classList.remove('vl-thud'); }, 400);
+        }, 360);
+        setTimeout(next, 900);
+      } else {
+        next();
+      }
+    }
+
+    if (root.classList.contains('vl-intro-on')) {
+      document.addEventListener('verlen:intro-done', function () { setTimeout(begin, 500); }, { once: true });
+    } else {
+      setTimeout(begin, 600);
+    }
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', setup);
+  else setup();
+})();
