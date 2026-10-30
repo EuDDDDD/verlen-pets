@@ -57,7 +57,7 @@
     '#vl-intro .vl-fillshade { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 50%, rgba(13,10,7,0) 45%, rgba(13,10,7,.6) 100%); opacity: 0; transition: opacity 1.4s ease; pointer-events: none; }',
     '#vl-intro.vl-playing video, #vl-intro.vl-playing .vl-fill, #vl-intro.vl-playing .vl-fillshade { opacity: 1; }',
     '#vl-intro.vl-playing .vl-gate { opacity: 0; pointer-events: none; }',
-    '#vl-intro.vl-playing .vl-poster { opacity: 0; }',
+    '#vl-intro.vl-playing .vl-poster { filter: blur(30px) brightness(.32) saturate(1.1); transform: scale(1.1); }',
     '#vl-intro .vl-skip { position: absolute; right: max(16px, env(safe-area-inset-right, 0px)); bottom: max(18px, env(safe-area-inset-bottom, 0px)); display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px 8px 18px; cursor: pointer; color: #E9DCC4; background: rgba(23,18,13,.55); border: 1px solid rgba(201,164,106,.7); border-radius: 999px; font: 500 14px/1.2 "Noto Serif TC", "PMingLiU", serif; letter-spacing: .2em; opacity: 0; pointer-events: none; transition: opacity .6s ease .8s, background .2s ease; backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }',
     '#vl-intro .vl-skip i { font: italic 500 14px "Cormorant Garamond", Georgia, serif; letter-spacing: .08em; color: #C9A46A; }',
     '#vl-intro .vl-skip:hover, #vl-intro .vl-skip:focus-visible { outline: none; background: rgba(60,46,30,.75); }',
