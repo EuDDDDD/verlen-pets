@@ -1,15 +1,17 @@
 /* Verlen opening film for the Carrd site.
    A title screen asks the visitor to click (browsers only allow sound after a click),
    then the tour film plays full screen with a Skip button, and fades into the site.
-   Shown once per browser tab session. */
+   Shown every time the page is opened (add ?nointro to the address to skip it while editing).
+   Clicks on the letter and film are kept to this screen, so the site's own music and the
+   walking mascots only start once the visitor is inside. */
 (function () {
-  var KEY = 'verlen-intro-seen';
-  try { if (sessionStorage.getItem(KEY)) return; } catch (e) { /* storage blocked: just show it */ }
   if (/[?&]nointro\b/.test(location.search)) return;
 
   var me = document.currentScript && document.currentScript.src;
   var BASE = me ? me.replace(/[^\/]*$/, '') : 'https://cdn.jsdelivr.net/gh/EuDDDDD/verlen-pets@main/';
-  var VIDEO = BASE + 'intro.mp4';
+  /* the film is larger than jsDelivr serves, so it comes from GitHub Pages (raw GitHub as a fallback) */
+  var VIDEOS = ['https://euddddd.github.io/verlen-pets/intro.mp4', 'https://raw.githubusercontent.com/EuDDDDD/verlen-pets/main/intro.mp4'];
+  if (/^(file:|https?:\/\/(localhost|127\.0\.0\.1))/.test(BASE)) VIDEOS.unshift(BASE + 'intro.mp4');
   var POSTER = BASE + 'intro-poster.jpg';
   var EMBLEM = BASE + 'intro-emblem.png';
 
@@ -45,8 +47,10 @@
     '#vl-intro .vl-open { margin-top: 18px; padding: 7px 4px 5px; font: 500 15px/1.4 "Noto Serif TC", "PMingLiU", serif; letter-spacing: .26em; color: #6B4E26; border-bottom: 1px solid #B8955A; }',
     '#vl-intro .vl-open i { display: block; margin-top: 2px; font: italic 600 14px/1.3 "Cormorant Garamond", Georgia, serif; letter-spacing: .1em; color: #8A6A38; }',
     '#vl-intro .vl-hint { margin-top: 10px; font: 500 12px/1.6 "Noto Serif TC", "PMingLiU", serif; letter-spacing: .14em; color: #9C8360; }',
-    '#vl-intro video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #000; opacity: 0; transition: opacity 1s ease; }',
-    '#vl-intro.vl-playing video { opacity: 1; }',
+    '#vl-intro video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: transparent; opacity: 0; transition: opacity 1s ease; }',
+    '#vl-intro .vl-fill { position: absolute; left: -8%; top: -8%; width: 116%; height: 116%; filter: blur(34px) brightness(.5) saturate(1.15); opacity: 0; transition: opacity 1.4s ease; }',
+    '#vl-intro .vl-fillshade { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 50%, rgba(13,10,7,0) 45%, rgba(13,10,7,.6) 100%); opacity: 0; transition: opacity 1.4s ease; pointer-events: none; }',
+    '#vl-intro.vl-playing video, #vl-intro.vl-playing .vl-fill, #vl-intro.vl-playing .vl-fillshade { opacity: 1; }',
     '#vl-intro.vl-playing .vl-gate { opacity: 0; pointer-events: none; }',
     '#vl-intro.vl-playing .vl-poster { opacity: 0; }',
     '#vl-intro .vl-skip { position: absolute; right: max(16px, env(safe-area-inset-right, 0px)); bottom: max(18px, env(safe-area-inset-bottom, 0px)); display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px 8px 18px; cursor: pointer; color: #E9DCC4; background: rgba(23,18,13,.55); border: 1px solid rgba(201,164,106,.7); border-radius: 999px; font: 500 14px/1.2 "Noto Serif TC", "PMingLiU", serif; letter-spacing: .2em; opacity: 0; pointer-events: none; transition: opacity .6s ease .8s, background .2s ease; backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }',
@@ -57,6 +61,28 @@
   ].join('\n');
   (document.head || root).appendChild(css);
 
+  var active = true;
+  var handlers = { enter: null, skip: null };
+
+  /* Every click, tap and key press made while the intro is up stays here:
+     it is handled below and then stopped, so nothing else on the page reacts to it. */
+  var SHIELD = ['click', 'dblclick', 'auxclick', 'contextmenu', 'mousedown', 'mouseup', 'pointerdown', 'pointerup', 'touchstart', 'touchend', 'keydown', 'keyup'];
+  function shield(e) {
+    if (!active) return;
+    var t = e.target && e.target.closest ? e.target : null;
+    if (e.type === 'click' && t) {
+      if (t.closest('.vl-letter') && handlers.enter) handlers.enter();
+      else if (t.closest('.vl-skip') && handlers.skip) handlers.skip();
+    }
+    if (e.type === 'keydown' && e.key === 'Escape' && handlers.skip) handlers.skip();
+    e.stopImmediatePropagation();
+  }
+  SHIELD.forEach(function (type) { window.addEventListener(type, shield, true); });
+  function unshield() {
+    active = false;
+    SHIELD.forEach(function (type) { window.removeEventListener(type, shield, true); });
+  }
+
   function build() {
     var box = document.createElement('div');
     box.id = 'vl-intro';
@@ -64,7 +90,9 @@
     box.setAttribute('aria-label', 'The Bells of Verlen');
     box.innerHTML =
       '<div class="vl-poster" style="background-image:url(\'' + POSTER + '\')"></div>' +
-      '<video playsinline preload="auto" src="' + VIDEO + '"></video>' +
+      '<canvas class="vl-fill" width="48" height="32" aria-hidden="true"></canvas>' +
+      '<div class="vl-fillshade"></div>' +
+      '<video playsinline preload="auto"></video>' +
       '<div class="vl-gate">' +
         '<button type="button" class="vl-letter">' +
           '<img class="vl-seal" src="' + EMBLEM + '" alt="">' +
@@ -82,12 +110,28 @@
     var video = box.querySelector('video');
     var enter = box.querySelector('.vl-letter');
     var skip = box.querySelector('.vl-skip');
+    var fill = box.querySelector('.vl-fill');
+    var ctx = null;
+    try { ctx = fill.getContext('2d'); } catch (e) { ctx = null; }
+    var source = 0;
     var done = false;
+    var playing = false;
+    video.src = VIDEOS[0];
+
+    /* the empty sides of the screen show a soft, blurred copy of the film */
+    var lastPaint = 0;
+    function paint(t) {
+      if (done) return;
+      if (ctx && playing && t - lastPaint > 90 && video.readyState >= 2) {
+        lastPaint = t;
+        try { ctx.drawImage(video, 0, 0, fill.width, fill.height); } catch (e) { /* not ready */ }
+      }
+      requestAnimationFrame(paint);
+    }
 
     function finish() {
       if (done) return;
       done = true;
-      try { sessionStorage.setItem(KEY, '1'); } catch (e) { /* ignore */ }
       box.classList.add('vl-out');
       var fade = setInterval(function () {
         try { video.volume = Math.max(0, video.volume - 0.08); } catch (e) { /* ignore */ }
@@ -97,28 +141,37 @@
         try { video.pause(); } catch (e) { /* ignore */ }
         box.remove();
         root.classList.remove('vl-intro-on');
+        unshield();
+        try { document.dispatchEvent(new CustomEvent('verlen:intro-done')); } catch (e) { /* ignore */ }
       }, 950);
     }
 
     function play() {
+      if (playing || done) return;
+      playing = true;
       box.classList.add('vl-playing');
       video.muted = false;
       video.volume = 1;
       var p = video.play();
-      if (p && p.catch) p.catch(function () { finish(); });
-      setTimeout(function () { skip.focus({ preventScroll: true }); }, 900);
+      if (p && p.catch) p.catch(function () { if (!video.error) finish(); });
+      requestAnimationFrame(paint);
+      setTimeout(function () { try { skip.focus({ preventScroll: true }); } catch (e) { /* ignore */ } }, 900);
     }
 
-    enter.addEventListener('click', play);
-    skip.addEventListener('click', finish);
+    handlers.enter = play;
+    handlers.skip = finish;
     video.addEventListener('ended', finish);
-    video.addEventListener('error', function () { if (box.classList.contains('vl-playing')) finish(); });
-    document.addEventListener('keydown', function (e) {
-      if (done) return;
-      if (e.key === 'Escape') finish();
+    video.addEventListener('error', function () {
+      if (source + 1 < VIDEOS.length) {
+        source += 1;
+        video.src = VIDEOS[source];
+        if (playing) { var p = video.play(); if (p && p.catch) p.catch(function () { finish(); }); }
+        return;
+      }
+      if (playing) finish();
     });
 
-    requestAnimationFrame(function () { requestAnimationFrame(function () { box.classList.add('vl-ready'); enter.focus({ preventScroll: true }); }); });
+    requestAnimationFrame(function () { requestAnimationFrame(function () { box.classList.add('vl-ready'); try { enter.focus({ preventScroll: true }); } catch (e) { /* ignore */ } }); });
   }
 
   if (document.body) build();

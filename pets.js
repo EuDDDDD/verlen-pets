@@ -457,5 +457,13 @@
   requestAnimationFrame(frame);
 })();
   }
-  if (document.body) boot(); else document.addEventListener('DOMContentLoaded', boot);
+  /* wait until the opening letter and film are over */
+  function go() {
+    if (document.documentElement.classList.contains('vl-intro-on')) {
+      document.addEventListener('verlen:intro-done', function () { setTimeout(boot, 400); }, { once: true });
+      return;
+    }
+    boot();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go); else setTimeout(go, 0);
 })();
