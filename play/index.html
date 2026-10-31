@@ -72,7 +72,7 @@ html[lang=en] .title { font-family: "Cormorant Garamond", Georgia, serif; font-s
 #stage { position: relative; flex: 1; min-height: 0; }
 #ground { position: absolute; left: 0; right: 0; bottom: 18px; height: 1px; background: linear-gradient(90deg, transparent, rgba(201,164,106,.35), transparent); }
 
-#pet { position: absolute; left: 0; bottom: 22px; touch-action: none; cursor: grab; will-change: transform; visibility: hidden; }
+#pet { position: absolute; left: 0; bottom: 22px; touch-action: none; cursor: grab; visibility: hidden; }
 #pet.held { cursor: grabbing; }
 .flip { transform-origin: 50% 6%; }
 .frames { position: relative; transform-origin: 50% 100%; }
@@ -88,7 +88,7 @@ html[lang=en] .title { font-family: "Cormorant Garamond", Georgia, serif; font-s
 #pet.talk .frames, #pet.swap .frames { animation: hop .28s ease-out; }
 #pet.held .frames { transform-origin: 50% 6%; animation: struggle .34s ease-in-out infinite; }
 #pet.land .frames { animation: squash .34s ease-out; }
-#pet.idle .frames, #pet.sit .frames { animation: breathe 2.6s ease-in-out infinite; }
+/* standing still: no scaling animation, so the drawing stays pixel-sharp */
 .shadow { position: absolute; left: 50%; bottom: -4px; width: 52%; height: 10px; transform: translateX(-50%); border-radius: 50%; background: rgba(0,0,0,.45); filter: blur(4px); pointer-events: none; }
 
 #bubble { position: absolute; z-index: 5; left: 50%; bottom: 100%; width: max-content; max-width: min(82vw, 380px); padding: 11px 17px 12px; background: radial-gradient(130% 120% at 30% 20%, var(--paper) 0%, var(--paper-2) 100%); color: var(--paper-ink); border: 1px solid #B8955A; border-radius: 3px; box-shadow: inset 0 0 0 3px #F6ECD7, inset 0 0 0 4px #D5BA8A, 0 6px 18px rgba(0,0,0,.45); transform: translate(calc(-50% + var(--shift, 0px)), 6px); opacity: 0; pointer-events: none; transition: opacity .3s ease, transform .3s ease; }
@@ -400,8 +400,9 @@ var CAST = [["grey","格雷","Grey"],["euduo","語朵","Euduo"],["johnny","約�
   function SH() { return stageEl.clientHeight; }
   function setMode(m) { mode = m; pet.className = m + (bubble.classList.contains('show') ? ' speaking' : ''); }
   function place() {
-    pet.style.transform = 'translate(' + x.toFixed(1) + 'px,' + (-y).toFixed(1) + 'px)';
-    flip.style.transform = 'rotate(' + ang.toFixed(2) + 'deg) scaleX(' + (mode === 'walk' && dir === -1 ? -1 : 1) + ')';
+    pet.style.transform = 'translate(' + Math.round(x) + 'px,' + Math.round(-y) + 'px)';
+    var fx = mode === 'walk' && dir === -1;
+    flip.style.transform = (Math.abs(ang) < 0.05 && !fx) ? 'none' : 'rotate(' + ang.toFixed(2) + 'deg) scaleX(' + (fx ? -1 : 1) + ')';
   }
   function clampBubble() {
     bubble.style.setProperty('--shift', '0px');
