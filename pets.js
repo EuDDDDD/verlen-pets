@@ -1,5 +1,6 @@
 /* Verlen Pets — © EuDDDDD. All rights reserved. */
 (function () {
+  var SCRIPT_SRC = document.currentScript && document.currentScript.src;
   function boot() {
     if (document.getElementById('vlp-layer')) return;
     var link = document.createElement('link');
@@ -57,7 +58,7 @@
     document.body.appendChild(holder.firstChild);
     (function () {
   /* ===== 圖片網址：換成你自己上傳的位置（結尾要有斜線） ===== */
-  var BASE = 'https://cdn.jsdelivr.net/gh/EuDDDDD/verlen-pets@main/';
+  var BASE = SCRIPT_SRC ? SCRIPT_SRC.replace(/[^\/]*$/, '') : 'https://cdn.jsdelivr.net/gh/EuDDDDD/verlen-pets@main/';
 
   var CAST = [
     { id: 'grey', zh: '格雷', en: 'Grey',
@@ -134,6 +135,8 @@
         '週三公休，我會去老茶館下棋。',
         '打烊後擦杯子，是一天裡最安靜的時候。',
         '但丁那小子，又在咖啡館跟人辯論了吧。',
+        '妮娜說我太久沒笑了，硬塞了一盒司康給我。……下次回她一鍋燉肉吧。',
+        '雨果那老頭又引了書裡的話……說燉肉跟好書一樣，都得慢慢熬。',
         '熱湯還有，要不要喝一碗？',
         '小寶貝又帶朋友回來了。……多添一份菜。',
         '碼頭的風，比以前冷了。'
@@ -264,7 +267,44 @@
   function VW() { return document.documentElement.clientWidth || window.innerWidth; }
   function VH() { return window.innerHeight; }
 
+  /* Walking runs as a browser animation on the compositor, so the mascot keeps moving
+     smoothly even when the page itself is busy (scrolling, big images, music player). */
+  var walk = null;
+  function walkX() {
+    if (!walk) { return x; }
+    var t = walk.anim.currentTime || 0;
+    return walk.x0 + walk.dir * SPEED * t / 1000;
+  }
+  function startWalk() {
+    if (walk || !pet.animate) { return; }
+    var x0 = x, x1 = dir === 1 ? VW() + 10 : -W() - 10;
+    var dist = Math.abs(x1 - x0);
+    if ((x1 - x0) * dir <= 0) { leave(); return; }
+    flip.style.transform = 'scaleX(' + (dir === -1 ? -1 : 1) + ')';
+    shadow.style.bottom = '-3px';
+    shadow.style.transform = 'translateX(-50%)';
+    shadow.style.opacity = '0.7';
+    var anim = pet.animate([
+      { transform: 'translate(' + x0.toFixed(1) + 'px,0px)' },
+      { transform: 'translate(' + x1.toFixed(1) + 'px,0px)' }
+    ], { duration: dist / SPEED * 1000, easing: 'linear', fill: 'forwards' });
+    walk = { anim: anim, x0: x0, dir: dir };
+    anim.onfinish = function () {
+      if (!walk || walk.anim !== anim) { return; }
+      x = x1; stopWalk(); if (mode === 'walk') { leave(); }
+    };
+  }
+  function stopWalk() {
+    if (!walk) { return; }
+    x = walkX();
+    var a = walk.anim;
+    walk = null;
+    pet.style.transform = 'translate(' + x.toFixed(1) + 'px,' + (-y).toFixed(1) + 'px)';
+    a.cancel();
+  }
+
   function setMode(m) {
+    if (m !== 'walk') { stopWalk(); }
     mode = m;
     pet.className = m === 'off' ? '' : 'vlp-' + m;
   }
@@ -304,6 +344,7 @@
   }
 
   function place() {
+    if (walk) { return; }
     pet.style.transform = 'translate(' + x.toFixed(1) + 'px,' + (-y).toFixed(1) + 'px)';
     var flipX = mode === 'walk' && dir === -1;
     flip.style.transform = 'rotate(' + ang.toFixed(2) + 'deg) scaleX(' + (flipX ? -1 : 1) + ')';
@@ -330,8 +371,11 @@
     var dt = Math.min((t - last) / 1000, 0.05);
     last = t;
     if (mode === 'walk') {
-      x += dir * SPEED * dt;
-      if ((dir === 1 && x > VW() + 10) || (dir === -1 && x < -W() - 10)) { leave(); }
+      if (pet.animate) { startWalk(); x = walkX(); }
+      else {
+        x += dir * SPEED * dt;
+        if ((dir === 1 && x > VW() + 10) || (dir === -1 && x < -W() - 10)) { leave(); }
+      }
     } else if (mode === 'held') {
       var ax = (vxS - prevVx) / Math.max(dt, 0.001);
       prevVx = vxS;
@@ -349,7 +393,7 @@
       ang += -ang * Math.min(1, dt * 8);
       if (y <= 0) { land(); }
     }
-    if (mode !== 'off') { place(); }
+    if (mode !== 'off' && !walk) { place(); }
     requestAnimationFrame(frame);
   }
 

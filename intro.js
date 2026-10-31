@@ -331,3 +331,105 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', setup);
   else setup();
 })();
+
+/* Site music and the Vimeo film: when a visitor starts the film, any music that is playing
+   pauses, and it carries on once the film is paused or finished. If the Vimeo player cannot
+   be reached, clicking into the film still pauses the music (it then stays off until the
+   visitor turns it back on). */
+(function () {
+  var media = new Set();
+  try {
+    var origPlay = HTMLMediaElement.prototype.play;
+    HTMLMediaElement.prototype.play = function () { media.add(this); return origPlay.apply(this, arguments); };
+  } catch (e) { /* ignore */ }
+  document.addEventListener('play', function (e) { if (e.target && e.target.play) media.add(e.target); }, true);
+
+  var ducked = [];
+  var filmPlaying = 0;
+  /* keep the site's ♪ button (#bgm-toggle) showing the right state */
+  function syncBtn(playing) {
+    var btn = document.getElementById('bgm-toggle');
+    if (!btn) return;
+    btn.classList.toggle('is-playing', playing);
+    btn.classList.toggle('is-muted', !playing);
+    btn.setAttribute('aria-label', playing ? '暫停背景音樂 Pause music' : '播放背景音樂 Play music');
+  }
+  function isOurs(m) { return m.closest && m.closest('#vl-intro'); }
+  function duck() {
+    media.forEach(function (m) {
+      if (!m.paused && !isOurs(m) && ducked.indexOf(m) < 0) {
+        try { m.pause(); ducked.push(m); } catch (e) { /* ignore */ }
+      }
+    });
+    if (ducked.length) syncBtn(false);
+  }
+  function restore() {
+    var list = ducked; ducked = [];
+    list.forEach(function (m) {
+      if (m.paused) {
+        try {
+          var p = m.play();
+          if (p && p.then) p.then(function () { syncBtn(true); }).catch(function () {});
+          else syncBtn(true);
+        } catch (e) { /* ignore */ }
+      }
+    });
+  }
+
+  var players = [];
+  var apiLoading = null;
+  function loadApi(cb) {
+    if (window.Vimeo && window.Vimeo.Player) { cb(); return; }
+    if (!apiLoading) {
+      apiLoading = [];
+      var s = document.createElement('script');
+      s.src = 'https://player.vimeo.com/api/player.js';
+      s.onload = function () { var q = apiLoading; apiLoading = null; q.forEach(function (f) { f(); }); };
+      s.onerror = function () { apiLoading = null; };
+      (document.head || document.documentElement).appendChild(s);
+    }
+    if (apiLoading) apiLoading.push(cb);
+  }
+  function hook(frame) {
+    if (frame.__vlHooked) return;
+    frame.__vlHooked = true;
+    loadApi(function () {
+      try {
+        var p = new window.Vimeo.Player(frame);
+        var playing = false;
+        p.on('play', function () { if (!playing) { playing = true; filmPlaying += 1; } duck(); });
+        function stopped() {
+          setTimeout(function () {
+            p.getPaused().then(function (paused) {
+              if (!paused || !playing) return;
+              playing = false; filmPlaying = Math.max(0, filmPlaying - 1);
+              if (!filmPlaying) restore();
+            }).catch(function () {});
+          }, 350);
+        }
+        p.on('pause', stopped);
+        p.on('ended', stopped);
+        players.push(p);
+      } catch (e) { /* ignore */ }
+    });
+  }
+  function scan() {
+    var frames = document.querySelectorAll('iframe[src*="player.vimeo.com"]');
+    for (var i = 0; i < frames.length; i++) hook(frames[i]);
+  }
+
+  /* fallback: a click into the film moves focus into its frame */
+  window.addEventListener('blur', function () {
+    setTimeout(function () {
+      var a = document.activeElement;
+      if (a && a.tagName === 'IFRAME' && /player\.vimeo\.com/.test(a.src || '')) duck();
+    }, 0);
+  });
+
+  function start() {
+    scan();
+    try { new MutationObserver(scan).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['src'] }); } catch (e) { /* ignore */ }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
+  else start();
+})();
