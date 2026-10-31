@@ -33,4 +33,5 @@ The following music is from Pixabay, used under the Pixabay Content License. Cop
 角色、世界觀、圖片與影片的著作權皆屬 EuDDDDD 所有（上列音樂除外）。
 Characters, setting, artwork and film © EuDDDDD (excluding the music credited above).
 
-免費提供，請勿付費購買。 Free to play; please never pay for it.
+本 repo 的素材與程式不提供下載或使用。免費開放的只有「維倫祕密市民」桌寵與手機網頁版遊戲，兩者皆免費遊玩，請勿付費購買。
+The assets and code in this repository are not offered for download or reuse. Only the "Secret Citizens of Verlen" desktop pet and pocket web game are free to play; please never pay for them.
