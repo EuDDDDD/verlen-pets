@@ -95,6 +95,7 @@ html[lang=en] .title { font-family: "Cormorant Garamond", Georgia, serif; font-s
 #bubble.show { opacity: 1; transform: translate(calc(-50% + var(--shift, 0px)), 0); }
 #bubble::after { content: ""; position: absolute; top: 100%; left: calc(50% - var(--shift, 0px)); width: 12px; height: 12px; background: var(--paper-2); border-right: 1px solid #B8955A; border-bottom: 1px solid #B8955A; transform: translate(-50%, -6px) rotate(45deg); }
 #bubble .who { display: block; font-family: "Cormorant Garamond", Georgia, serif; font-style: italic; font-weight: 600; font-size: 15px; letter-spacing: .06em; color: #8A6A38; margin: 0 0 4px; padding: 0 0 4px; border-bottom: 1px solid #DCC59A; }
+html[lang=en] #bubble .who { font-size: 18.5px; letter-spacing: .04em; }
 #bubble .say { display: block; font-size: 16px; line-height: 1.6; letter-spacing: .02em; }
 
 .emote { position: absolute; top: 0; left: 72%; width: calc(var(--sz) * .2); height: calc(var(--sz) * .2); pointer-events: none; z-index: 4; opacity: 0; }
