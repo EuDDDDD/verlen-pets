@@ -2,10 +2,10 @@
 
 © EuDDDDD. All rights reserved.
 
-本 repo 是 [維倫河港城邦](https://bells-of-verlen.carrd.co/) 網站使用的素材與程式，包含角色圖片、開場影片與網頁程式碼。
+本 repo 是 [維倫河港城邦](https://bells-of-verlen.carrd.co/) 網站使用的素材與程式，包含角色圖片、開場影片、手機網頁版與網頁程式碼。
 所有內容僅供該網站使用，未經同意，禁止下載、轉載、修改或用於任何其他用途。
 
-This repository holds the artwork, opening film and scripts used by [The Bells of Verlen](https://bells-of-verlen.carrd.co/).
+This repository holds the artwork, opening film, pocket web version and scripts used by [The Bells of Verlen](https://bells-of-verlen.carrd.co/).
 All contents are for use on that site only. Do not download, repost, modify, or reuse them without permission.
 
 ## 內容 Contents
@@ -14,9 +14,23 @@ All contents are for use on that site only. Do not download, repost, modify, or 
 | --- | --- |
 | `*.webp` | 網站上走動的角色小人圖片 · Walking mascot sprites |
 | `pets.js` | 網站角色小人的程式 · Mascot script |
-| `intro.js` | 開場信箋與導覽影片的程式 · Opening letter and film script |
+| `intro.js` | 開場信箋、導覽影片與主頁效果的程式 · Opening letter, film and home page effects |
 | `intro.mp4` | 維倫導覽開場影片 · Opening tour film |
 | `intro-poster.jpg`、`intro-emblem.png` | 開場畫面的背景與徽章 · Opening screen background and emblem |
+| `pocket.html` | 維倫祕密市民・手機網頁版 · Secret Citizens of Verlen, pocket web version |
+| `pocket-bgm.mp3` | 手機網頁版背景音樂 · Background music for the pocket version |
 
-角色、世界觀、圖片與影片的著作權皆屬 EuDDDDD 所有。
-Characters, setting, artwork and film © EuDDDDD.
+## 音樂來源 Music Credits
+
+以下音樂來自 Pixabay，依 [Pixabay Content License](https://pixabay.com/service/license-summary/) 使用，著作權屬原作者所有。
+The following music is from Pixabay, used under the Pixabay Content License. Copyright belongs to the original creators.
+
+- `intro.mp4`：[Nostalgic](https://pixabay.com/music/nostalgia-nostalgic-590392/)
+- `pocket-bgm.mp3`：[Piano Background](https://pixabay.com/music/solo-piano-piano-piano-background-590657/) by andriih
+
+## 著作權 Copyright
+
+角色、世界觀、圖片與影片的著作權皆屬 EuDDDDD 所有（上列音樂除外）。
+Characters, setting, artwork and film © EuDDDDD (excluding the music credited above).
+
+免費提供，請勿付費購買。 Free to play; please never pay for it.
