@@ -59,6 +59,8 @@ html[lang=en] .title { font-family: "Cormorant Garamond", Georgia, serif; font-s
 @keyframes fsink { 0%, 100% { border-color: rgba(201,164,106,.35); } 30% { border-color: rgba(140,150,170,.75); box-shadow: 0 0 10px rgba(120,140,170,.35); } }
 .feel .grow.pulse { animation: hpulse .6s ease-out; }
 @keyframes hpulse { 0% { transform: scale(1); } 35% { transform: scale(1.35); filter: drop-shadow(0 0 6px rgba(226,120,140,.8)); } 100% { transform: scale(1); } }
+html[lang=en] #toast { font-size: 12.5px; letter-spacing: .02em; line-height: 1.65; }
+#toast { text-wrap: balance; }
 #toast .note { display: block; margin-top: 6px; font-size: 11.5px; color: #A8977A; }
 .feel .lock svg path { stroke: #8C7A5A; stroke-dasharray: 2.6 2.2; }
 .cast { display: flex; justify-content: center; gap: 9px; margin-top: 12px; }
@@ -192,12 +194,12 @@ var CAST = [["grey","格雷","Grey"],["euduo","語朵","Euduo"],["johnny","約�
   /* ---------- language ---------- */
   var T = {
     zh: { title: '✦ 維倫祕密市民 ✦', hint: '點一下說話・按住拎起來', dl: '下載電腦版', more: '✦ 享有更多功能，敬請期待 ✦', feel: '感受：',
-          dlToast: '✦ 電腦版即將開放下載 ✦\n番茄鐘陪讀、河鐘報時、朋友串門子……等你來探索。',
+          dlToast: '✦ 電腦版即將開放下載 ✦\n番茄鐘陪讀、河鐘報時、朋友串門子……\n等你來探索。',
           feelOn: '第一顆心已經收下了。', feelOff: '多陪陪他，感受會慢慢加深。', feelMore: '\n更深的心意，在電腦桌面上等你。\n※ 清除瀏覽器記錄，感受會重置喔！',
           play: '播放背景音樂', pause: '暫停背景音樂', pet: '點一下說話，按住可以拎起來', doc: '維倫祕密市民・口袋版' },
     en: { title: '✦ Secret Citizens of Verlen ✦', hint: 'Tap to talk · Hold to lift', dl: 'Get the PC version', more: '✦ More to discover, coming soon ✦', feel: 'Feelings:',
-          dlToast: '✦ The PC version is coming soon ✦\nStudy timer, river bell chimes, friends dropping by... waiting for you to explore.',
-          feelOn: 'The first heart is yours.', feelOff: 'Spend time together and their feelings will grow.', feelMore: '\nDeeper feelings await on your desktop.\n※ Clearing your browser data resets their feelings!',
+          dlToast: '✦ The PC version is coming soon ✦\nStudy timer, river bell chimes, visiting friends...\nall waiting for you to explore.',
+          feelOn: 'The first heart is yours.', feelOff: 'Spend time with them,\nand their feelings will grow.', feelMore: '\nDeeper feelings await on your desktop.\n※ Clearing browser data resets them!',
           play: 'Play music', pause: 'Pause music', pet: 'Tap to talk, hold to lift', doc: 'Secret Citizens of Verlen · Pocket' }
   };
   var lang = save.lang || ((navigator.language || '').toLowerCase().indexOf('zh') === 0 ? 'zh' : 'en');
@@ -356,13 +358,15 @@ var CAST = [["grey","格雷","Grey"],["euduo","語朵","Euduo"],["johnny","約�
     if (music.paused) { save.music = true; playMusic(); } else { save.music = false; music.pause(); setMusic(false); }
     persist();
   });
+  /* Phones only allow sound after a finished tap (touchend / click), not on touch-down,
+     so listen to those and keep listening until the music has really started. */
+  var FIRST = ['touchend', 'click', 'keydown'];
   function firstTouch(e) {
-    if (started || save.music === false) return;
+    if (started || save.music === false) { FIRST.forEach(function (t) { document.removeEventListener(t, firstTouch, true); }); return; }
     if (e && e.target && bgmBtn.contains(e.target)) return;
     playMusic();
   }
-  document.addEventListener('pointerdown', firstTouch, { capture: true, once: true });
-  document.addEventListener('keydown', firstTouch, { capture: true, once: true });
+  FIRST.forEach(function (t) { document.addEventListener(t, firstTouch, true); });
   document.addEventListener('visibilitychange', function () {
     if (document.hidden) { if (!music.paused) { music.pause(); music.__resume = true; } }
     else if (music.__resume) { music.__resume = false; playMusic(); }
