@@ -201,16 +201,21 @@
     '.vl-wl-hide { opacity: 0 !important; }',
     '.vl-caret { display: inline-block; width: .08em; min-width: 2px; height: 1em; margin-left: .06em; vertical-align: -.12em; background: currentColor; animation: vlCaret .8s steps(1) infinite; }',
     '@keyframes vlCaret { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }',
-    /* the seal is lifted high, hangs for a breath, then is pressed down hard */
-    '.vl-stamp { animation: vlStamp 1.7s cubic-bezier(.3,0,.2,1) both; transform-origin: 50% 60%; }',
-    '@keyframes vlStamp {',
-    '  0%   { opacity: 0; transform: translateY(-60px) scale(2.3) rotate(-18deg); filter: blur(4px) drop-shadow(0 40px 30px rgba(0,0,0,.6)); }',
-    '  30%  { opacity: 1; transform: translateY(-40px) scale(2.05) rotate(-12deg); filter: blur(1px) drop-shadow(0 36px 26px rgba(0,0,0,.55)); }',
-    '  55%  { opacity: 1; transform: translateY(-46px) scale(2.1) rotate(-13deg); filter: blur(1px) drop-shadow(0 40px 28px rgba(0,0,0,.55)); }',
-    '  70%  { transform: translateY(4px) scale(.9) rotate(2deg); filter: blur(0) drop-shadow(0 1px 1px rgba(0,0,0,.5)); animation-timing-function: ease-out; }',
-    '  80%  { transform: translateY(-3px) scale(1.05) rotate(-1deg); filter: drop-shadow(0 6px 6px rgba(0,0,0,.35)); }',
-    '  90%  { transform: translateY(1px) scale(.98) rotate(.4deg); }',
-    '  100% { opacity: 1; transform: none; filter: none; } }',
+    /* a solid brass seal comes down onto the page, lifts away, and leaves the emblem printed underneath */
+    '.vl-seal { position: absolute; pointer-events: none; border-radius: 50%; z-index: 3; opacity: 0;',
+    '  background: radial-gradient(circle at 38% 32%, #F3D99B 0%, #D3A85E 38%, #A87C3A 70%, #6E4E22 100%);',
+    '  box-shadow: inset 0 0 0 3px rgba(80,55,20,.55), inset 0 -6px 14px rgba(60,40,15,.45), 0 30px 26px rgba(0,0,0,.55);',
+    '  animation: vlSeal 1.8s cubic-bezier(.3,0,.2,1) forwards; }',
+    '.vl-seal i { position: absolute; inset: 0; border-radius: 50%; background: var(--m) center / contain no-repeat; transform: scaleX(-1); mix-blend-mode: multiply; opacity: .55; filter: grayscale(1) contrast(1.3); }',
+    '@keyframes vlSeal {',
+    '  0%   { opacity: 0; transform: translateY(-70px) scale(1.12); box-shadow: inset 0 0 0 3px rgba(80,55,20,.55), inset 0 -6px 14px rgba(60,40,15,.45), 0 46px 34px rgba(0,0,0,.45); }',
+    '  25%  { opacity: 1; transform: translateY(-48px) scale(1.1); }',
+    '  48%  { opacity: 1; transform: translateY(-54px) scale(1.11); }',
+    '  62%  { opacity: 1; transform: translateY(3px) scale(.97); box-shadow: inset 0 0 0 3px rgba(80,55,20,.55), inset 0 -6px 14px rgba(60,40,15,.45), 0 2px 4px rgba(0,0,0,.6); animation-timing-function: ease-in-out; }',
+    '  74%  { opacity: 1; transform: translateY(0) scale(1); }',
+    '  100% { opacity: 0; transform: translateY(-60px) scale(1.08); box-shadow: inset 0 0 0 3px rgba(80,55,20,.55), inset 0 -6px 14px rgba(60,40,15,.45), 0 40px 30px rgba(0,0,0,.3); } }',
+    '.vl-inked { animation: vlInk 1.2s ease-out both; }',
+    '@keyframes vlInk { 0% { opacity: 0; filter: brightness(1.8) saturate(1.3); } 15% { opacity: 1; filter: brightness(1.6) saturate(1.2) drop-shadow(0 0 14px rgba(233,203,140,.75)); } 100% { opacity: 1; filter: none; } }',
     '.vl-thud { animation: vlThud .5s ease-out; }',
     '@keyframes vlThud { 0% { transform: translateY(0); } 25% { transform: translateY(6px); } 50% { transform: translateY(-2px); } 75% { transform: translateY(1px); } 100% { transform: none; } }',
     '.vl-ring { position: absolute; pointer-events: none; border-radius: 50%; border: 3px solid rgba(217,183,124,.9); box-shadow: 0 0 26px rgba(217,183,124,.55), inset 0 0 18px rgba(217,183,124,.35); animation: vlRing 1.3s ease-out forwards; }',
@@ -315,9 +320,22 @@
         setTimeout(function () { typeOut(it, next); }, i === 1 ? 0 : 220);
       }
       if (emblem) {
-        emblem.classList.remove('vl-wl-hide');
-        emblem.classList.add('vl-stamp');
+        var host0 = emblem.parentNode;
+        if (getComputedStyle(host0).position === 'static') host0.style.position = 'relative';
+        var seal = document.createElement('span');
+        seal.className = 'vl-seal';
+        seal.style.left = emblem.offsetLeft + 'px';
+        seal.style.top = emblem.offsetTop + 'px';
+        seal.style.width = emblem.offsetWidth + 'px';
+        seal.style.height = emblem.offsetHeight + 'px';
+        var engr = document.createElement('i');
+        engr.style.setProperty('--m', 'url("' + emblem.currentSrc + '")');
+        seal.appendChild(engr);
+        host0.appendChild(seal);
+        setTimeout(function () { seal.remove(); }, 1900);
         setTimeout(function () {
+          emblem.classList.remove('vl-wl-hide');
+          emblem.classList.add('vl-inked');
           /* little sparks fly out where the seal lands */
           for (var k = 0; k < 10; k++) {
             var dot = document.createElement('span');
@@ -345,8 +363,8 @@
           var sec = emblem.closest('section, article, .container, .inner') || emblem.parentNode;
           sec.classList.add('vl-thud');
           setTimeout(function () { sec.classList.remove('vl-thud'); }, 600);
-        }, 1190);
-        setTimeout(next, 1900);
+        }, 1116);
+        setTimeout(next, 2000);
       } else {
         next();
       }
