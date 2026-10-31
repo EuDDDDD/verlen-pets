@@ -428,10 +428,33 @@ var CAST = [["grey","格雷","Grey"],["euduo","語朵","Euduo"],["johnny","約�
     var lim = b.width / 2 - 18;
     bubble.style.setProperty('--shift', Math.max(-lim, Math.min(lim, shift)) + 'px');
   }
+  /* wrapped CJK lines rarely fill the box (punctuation can't start a line), so shrink the
+     bubble to its widest line instead of leaving a blank strip on the right */
+  function fitBubble(bub, sayEl) {
+    bub.style.width = '';
+    var t = sayEl.firstChild;
+    if (!t) return;
+    var r = document.createRange(); r.selectNodeContents(t);
+    var rects = r.getClientRects(), tops = {}, lines = 0, maxW = 0;
+    for (var i = 0; i < rects.length; i++) {
+      var k = Math.round(rects[i].top);
+      if (!tops[k]) { tops[k] = [rects[i].left, rects[i].right]; lines++; }
+      else { tops[k][0] = Math.min(tops[k][0], rects[i].left); tops[k][1] = Math.max(tops[k][1], rects[i].right); }
+    }
+    if (lines < 2) return;
+    for (var key in tops) maxW = Math.max(maxW, tops[key][1] - tops[key][0]);
+    var whoEl = bub.firstElementChild;
+    if (whoEl && whoEl !== sayEl && whoEl.firstChild) { var rw = document.createRange(); rw.selectNodeContents(whoEl); maxW = Math.max(maxW, rw.getBoundingClientRect().width); }
+    var inner = sayEl.getBoundingClientRect().width;
+    if (maxW >= inner - 1) return;
+    var border = getComputedStyle(bub).boxSizing === 'border-box';
+    bub.style.width = (border ? bub.getBoundingClientRect().width - (inner - maxW) + 1 : maxW + 1) + 'px';
+  }
   function showBubble(text) {
     var e = splitEmote(text);
     who.textContent = lang === 'en' ? curInfo()[2] : curInfo()[2] + ' · ' + curInfo()[1];
     say.textContent = e.text;
+    fitBubble(bubble, say);
     showEmote(e.emote);
     clampBubble();
     bubble.classList.add('show');
