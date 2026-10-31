@@ -484,3 +484,21 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
   else start();
 })();
+
+/* Links to other sites (pocket game, Threads, YouTube…) open in a new tab so visitors keep their place on Verlen.
+   Carrd's free plan has no "new window" setting, so this does it for every outside link. In-page jumps (#section) stay as they are. */
+(function () {
+  function mark() {
+    var links = document.querySelectorAll('a[href]');
+    for (var i = 0; i < links.length; i++) {
+      var a = links[i];
+      if (a.protocol !== 'http:' && a.protocol !== 'https:') continue;
+      if (a.hostname === location.hostname) continue;
+      a.target = '_blank';
+      a.rel = 'noopener';
+    }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mark);
+  else mark();
+  window.addEventListener('load', mark);
+})();
