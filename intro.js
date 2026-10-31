@@ -201,14 +201,23 @@
     '.vl-wl-hide { opacity: 0 !important; }',
     '.vl-caret { display: inline-block; width: .08em; min-width: 2px; height: 1em; margin-left: .06em; vertical-align: -.12em; background: currentColor; animation: vlCaret .8s steps(1) infinite; }',
     '@keyframes vlCaret { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }',
-    '.vl-stamp { animation: vlStamp .62s cubic-bezier(.2,.9,.25,1) both; transform-origin: 50% 55%; }',
-    '@keyframes vlStamp { 0% { opacity: 0; transform: scale(2.1) rotate(-16deg); filter: blur(3px) drop-shadow(0 26px 22px rgba(0,0,0,.55)); }',
-    '  58% { opacity: 1; transform: scale(.93) rotate(2deg); filter: blur(0) drop-shadow(0 2px 2px rgba(0,0,0,.4)); }',
-    '  74% { transform: scale(1.035) rotate(-.8deg); } 100% { opacity: 1; transform: none; filter: none; } }',
-    '.vl-thud { animation: vlThud .32s ease-out; }',
-    '@keyframes vlThud { 0% { transform: translateY(0); } 30% { transform: translateY(3px); } 60% { transform: translateY(-1px); } 100% { transform: none; } }',
-    '.vl-ring { position: absolute; pointer-events: none; border-radius: 50%; border: 2px solid rgba(201,164,106,.75); box-shadow: 0 0 18px rgba(201,164,106,.35); animation: vlRing .9s ease-out forwards; }',
-    '@keyframes vlRing { 0% { opacity: .9; transform: scale(.85); } 100% { opacity: 0; transform: scale(1.45); } }'
+    /* the seal is lifted high, hangs for a breath, then is pressed down hard */
+    '.vl-stamp { animation: vlStamp 1.7s cubic-bezier(.3,0,.2,1) both; transform-origin: 50% 60%; }',
+    '@keyframes vlStamp {',
+    '  0%   { opacity: 0; transform: translateY(-60px) scale(2.3) rotate(-18deg); filter: blur(4px) drop-shadow(0 40px 30px rgba(0,0,0,.6)); }',
+    '  30%  { opacity: 1; transform: translateY(-40px) scale(2.05) rotate(-12deg); filter: blur(1px) drop-shadow(0 36px 26px rgba(0,0,0,.55)); }',
+    '  55%  { opacity: 1; transform: translateY(-46px) scale(2.1) rotate(-13deg); filter: blur(1px) drop-shadow(0 40px 28px rgba(0,0,0,.55)); }',
+    '  70%  { transform: translateY(4px) scale(.9) rotate(2deg); filter: blur(0) drop-shadow(0 1px 1px rgba(0,0,0,.5)); animation-timing-function: ease-out; }',
+    '  80%  { transform: translateY(-3px) scale(1.05) rotate(-1deg); filter: drop-shadow(0 6px 6px rgba(0,0,0,.35)); }',
+    '  90%  { transform: translateY(1px) scale(.98) rotate(.4deg); }',
+    '  100% { opacity: 1; transform: none; filter: none; } }',
+    '.vl-thud { animation: vlThud .5s ease-out; }',
+    '@keyframes vlThud { 0% { transform: translateY(0); } 25% { transform: translateY(6px); } 50% { transform: translateY(-2px); } 75% { transform: translateY(1px); } 100% { transform: none; } }',
+    '.vl-ring { position: absolute; pointer-events: none; border-radius: 50%; border: 3px solid rgba(217,183,124,.9); box-shadow: 0 0 26px rgba(217,183,124,.55), inset 0 0 18px rgba(217,183,124,.35); animation: vlRing 1.3s ease-out forwards; }',
+    '.vl-ring.r2 { border-width: 2px; animation-delay: .14s; opacity: 0; }',
+    '@keyframes vlRing { 0% { opacity: 1; transform: scale(.9); } 100% { opacity: 0; transform: scale(1.75); } }',
+    '.vl-dust { position: absolute; pointer-events: none; width: 6px; height: 6px; border-radius: 50%; background: rgba(233,203,140,.85); box-shadow: 0 0 6px rgba(233,203,140,.8); animation: vlDust .9s ease-out forwards; }',
+    '@keyframes vlDust { 0% { opacity: 1; transform: translate(0,0) scale(1); } 100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(.3); } }'
   ].join('\n');
   (document.head || root).appendChild(css);
 
@@ -288,8 +297,17 @@
     root.classList.remove('vl-wl');
 
     function visible() { return els[0].getClientRects().length > 0; }
+    function ready() {
+      if (!visible()) return false;
+      if (document.readyState !== 'complete') return false;
+      if (document.body.classList.contains('is-loading') || document.body.classList.contains('is-playing')) return false;
+      if (emblem && !(emblem.complete && emblem.naturalWidth)) return false;
+      var r = els[0].getBoundingClientRect();
+      return r.top < innerHeight && r.bottom > 0;
+    }
+    var waited = 0;
     function begin() {
-      if (!visible()) { setTimeout(begin, 250); return; }
+      if (!ready() && waited < 8000) { waited += 200; setTimeout(begin, 200); return; }
       var i = 0;
       function next() {
         if (i >= items.length) return;
@@ -300,6 +318,18 @@
         emblem.classList.remove('vl-wl-hide');
         emblem.classList.add('vl-stamp');
         setTimeout(function () {
+          /* little sparks fly out where the seal lands */
+          for (var k = 0; k < 10; k++) {
+            var dot = document.createElement('span');
+            dot.className = 'vl-dust';
+            var ang = (k / 10) * Math.PI * 2, dist = emblem.offsetWidth * (0.55 + Math.random() * 0.35);
+            dot.style.left = (emblem.offsetLeft + emblem.offsetWidth / 2 - 3) + 'px';
+            dot.style.top = (emblem.offsetTop + emblem.offsetHeight / 2 - 3) + 'px';
+            dot.style.setProperty('--dx', Math.round(Math.cos(ang) * dist) + 'px');
+            dot.style.setProperty('--dy', Math.round(Math.sin(ang) * dist) + 'px');
+            emblem.parentNode.appendChild(dot);
+            (function (d) { setTimeout(function () { d.remove(); }, 1000); })(dot);
+          }
           var host = emblem.parentNode;
           var hostCs = getComputedStyle(host);
           if (hostCs.position === 'static') host.style.position = 'relative';
@@ -310,21 +340,24 @@
           ring.style.width = emblem.offsetWidth + 'px';
           ring.style.height = emblem.offsetHeight + 'px';
           host.appendChild(ring);
-          setTimeout(function () { ring.remove(); }, 1000);
+          var ring2 = ring.cloneNode(); ring2.className = 'vl-ring r2'; host.appendChild(ring2);
+          setTimeout(function () { ring.remove(); ring2.remove(); }, 1600);
           var sec = emblem.closest('section, article, .container, .inner') || emblem.parentNode;
           sec.classList.add('vl-thud');
-          setTimeout(function () { sec.classList.remove('vl-thud'); }, 400);
-        }, 360);
-        setTimeout(next, 900);
+          setTimeout(function () { sec.classList.remove('vl-thud'); }, 600);
+        }, 1190);
+        setTimeout(next, 1900);
       } else {
         next();
       }
     }
 
     if (root.classList.contains('vl-intro-on')) {
-      document.addEventListener('verlen:intro-done', function () { setTimeout(begin, 500); }, { once: true });
+      document.addEventListener('verlen:intro-done', function () { setTimeout(begin, 700); }, { once: true });
     } else {
-      setTimeout(begin, 600);
+      /* give Carrd's own entrance fade time to finish so the stamp is actually seen */
+      var go = function () { setTimeout(begin, 900); };
+      if (document.readyState === 'complete') go(); else window.addEventListener('load', go, { once: true });
     }
   }
 
