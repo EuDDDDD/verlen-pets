@@ -408,7 +408,7 @@ var CAST = [["grey","格雷","Grey"],["euduo","語朵","Euduo"],["johnny","約�
 
   /* ---------- motion ---------- */
   var mode = 'off', x = 0, y = 0, vy = 0, vx = 0, dir = 1, ang = 0, angV = 0, prevVx = 0;
-  var modeUntil = 0, nextThink = 0, lastTouch = 0, talkT = null, walkTo = null;
+  var modeUntil = 0, nextThink = 0, sitAgain = 0, lastTouch = 0, talkT = null, walkTo = null;
   function now() { return performance.now(); }
   function W() { return pet.offsetWidth || 200; }
   function H() { return pet.offsetHeight || 300; }
@@ -464,7 +464,7 @@ var CAST = [["grey","格雷","Grey"],["euduo","語朵","Euduo"],["johnny","約�
     if (mode === 'idle') {
       var quiet = t - lastTouch;
       var r = Math.random();
-      if (quiet > 25000 && r < .35) { setMode('sit'); modeUntil = t + 20000 + Math.random() * 25000; return; }
+      if (quiet > 25000 && t > sitAgain && r < .35) { setMode('sit'); modeUntil = t + 20000 + Math.random() * 25000; return; }
       if (r < .55) {
         var span = Math.max(0, SW() - W());
         walkTo = Math.max(0, Math.min(span, center() + (Math.random() - .5) * span * .8));
@@ -483,7 +483,7 @@ var CAST = [["grey","格雷","Grey"],["euduo","語朵","Euduo"],["johnny","約�
     } else if (mode === 'idle') {
       pet.classList.remove('swap'); think(t);
     } else if (mode === 'sit') {
-      if (t > modeUntil) { setMode('idle'); pet.classList.add('swap'); }
+      if (t > modeUntil) { setMode('idle'); pet.classList.add('swap'); nextThink = t + 5000 + Math.random() * 4000; sitAgain = t + 45000; }
     } else if (mode === 'held') {
       var ax = (vx - prevVx) / Math.max(dt, .001); prevVx = vx;
       angV += (-90 * ang - 7 * angV - ax * .045) * dt; ang += angV * dt;
