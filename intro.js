@@ -202,11 +202,11 @@
     '.vl-caret { display: inline-block; width: .08em; min-width: 2px; height: 1em; margin-left: .06em; vertical-align: -.12em; background: currentColor; animation: vlCaret .8s steps(1) infinite; }',
     '@keyframes vlCaret { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }',
     /* a solid brass seal comes down onto the page, lifts away, and leaves the emblem printed underneath */
-    '.vl-seal { position: absolute; pointer-events: none; border-radius: 50%; z-index: 3; opacity: 0;',
+    '.vl-stamp { position: absolute; pointer-events: none; border-radius: 50%; z-index: 3; opacity: 0;',
     '  background: radial-gradient(circle at 38% 32%, #F3D99B 0%, #D3A85E 38%, #A87C3A 70%, #6E4E22 100%);',
     '  box-shadow: inset 0 0 0 3px rgba(80,55,20,.55), inset 0 -6px 14px rgba(60,40,15,.45), 0 30px 26px rgba(0,0,0,.55);',
     '  animation: vlSeal 1.8s cubic-bezier(.3,0,.2,1) forwards; }',
-    '.vl-seal i { position: absolute; inset: 0; border-radius: 50%; background: var(--m) center / contain no-repeat; transform: scaleX(-1); mix-blend-mode: multiply; opacity: .55; filter: grayscale(1) contrast(1.3); }',
+    '.vl-stamp i { position: absolute; inset: 0; border-radius: 50%; background: var(--m) center / contain no-repeat; transform: scaleX(-1); mix-blend-mode: multiply; opacity: .55; filter: grayscale(1) contrast(1.3); }',
     '@keyframes vlSeal {',
     '  0%   { opacity: 0; transform: translateY(-70px) scale(1.12); box-shadow: inset 0 0 0 3px rgba(80,55,20,.55), inset 0 -6px 14px rgba(60,40,15,.45), 0 46px 34px rgba(0,0,0,.45); }',
     '  25%  { opacity: 1; transform: translateY(-48px) scale(1.1); }',
@@ -323,7 +323,7 @@
         var host0 = emblem.parentNode;
         if (getComputedStyle(host0).position === 'static') host0.style.position = 'relative';
         var seal = document.createElement('span');
-        seal.className = 'vl-seal';
+        seal.className = 'vl-stamp';
         seal.style.left = emblem.offsetLeft + 'px';
         seal.style.top = emblem.offsetTop + 'px';
         seal.style.width = emblem.offsetWidth + 'px';
