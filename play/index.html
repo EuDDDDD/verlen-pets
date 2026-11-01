@@ -218,6 +218,8 @@ var CAST = [["grey","格雷","Grey"],["euduo","語朵","Euduo"],["johnny","約�
   function addFeel(id, d) {
     if (!d) return;
     var before = stage(id);
+    /* once the heart is full it stays full: a sulky lift can no longer take it away */
+    if (d < 0 && before >= 1) return;
     save.aff[id] = Math.max(0, Math.min(cap(id), (save.aff[id] || 0) + d));
     persist();
     var after = stage(id);
@@ -377,7 +379,7 @@ var CAST = [["grey","格雷","Grey"],["euduo","語朵","Euduo"],["johnny","約�
   /* ---------- character ---------- */
   function cur() { return save.character; }
   function curInfo() { for (var i = 0; i < CAST.length; i++) if (CAST[i][0] === cur()) return CAST[i]; return CAST[0]; }
-  function linesOf(kind) { var L = LL()[cur()]; var a = (L[kind] || []).slice(); if (stage(cur()) >= 1) a = a.concat(L[kind + '1'] || []); return a; }
+  function linesOf(kind) { var L = LL()[cur()]; var a = (L[kind] || []).slice(); if (stage(cur()) >= 1) { a = a.concat(L[kind + '1'] || []); if (kind === 'lines') a = a.concat(L.levelUp1 || []); } return a; }
   var last = {};
   function pick(list, key) {
     if (!list.length) return '';
