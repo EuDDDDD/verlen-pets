@@ -41,7 +41,7 @@
 #vlp-bubble.vlp-side-r::after { top: 14px; left: 0; transform: translate(-50%, 0) rotate(135deg); }
 #vlp-bubble.vlp-side-l::after { top: 14px; left: 100%; transform: translate(-50%, 0) rotate(-45deg); }
 #vlp-bubble .vlp-who { display: block; font-family: "Cormorant Garamond", Georgia, serif; font-style: italic; font-weight: 600; font-size: 13px; letter-spacing: .06em; line-height: 1.3; color: #8A6A38; margin: 0 0 3px; padding: 0 0 3px; border-bottom: 1px solid #DCC59A; }
-#vlp-bubble .vlp-say { display: block; font-family: "Noto Serif TC", "Songti TC", "PMingLiU", serif; font-weight: 500; font-size: 14px; line-height: 1.55; letter-spacing: .02em; }
+#vlp-bubble .vlp-say { display: block; white-space: pre-line; font-family: "Noto Serif TC", "Songti TC", "PMingLiU", serif; font-weight: 500; font-size: 14px; line-height: 1.55; letter-spacing: .02em; }
 @media (max-width: 736px) {
   #vlp-pet img { height: 96px; }
   #vlp-bubble { max-width: 200px; padding: 7px 12px 8px; }
@@ -65,7 +65,7 @@
       lines: [
         '你來維倫玩了嗎？',
         '渡鴉書屋進了新書，要一起去看看嗎？',
-        '五點的鐘聲一響就該回家了……不過今天例外。',
+        '五點的鐘聲一響就該回家了｜……不過今天例外。',
         '你又在發呆了，在想什麼？',
         '時間還早，我們繞遠路回去吧。',
         '雨果先生又幫我留了一本書……別問是什麼書。',
@@ -107,7 +107,7 @@
         '尼科跟華特又在課堂上吵起來了，像兩隻炸毛的貓～',
         '要不要喝薑汁汽水？我請你！',
         '河岸步道那隻橘貓今天也在曬太陽，跟我一樣！',
-        '妮娜阿姨說，常一起來吃甜點的兩個人會越來越要好喔～（偷看）'
+        '妮娜阿姨說，常一起來吃甜點的兩個人會越來越要好喔～（偷看）｜'
       ],
       held: [
         '哇——好高！可以順便拍一張嗎？',
@@ -136,7 +136,7 @@
         '打烊後擦杯子，是一天裡最安靜的時候。',
         '但丁那小子，又在咖啡館跟人辯論了吧。',
         '妮娜說我太久沒笑了，硬塞了一盒司康給我。……下次回她一鍋燉肉吧。',
-        '雨果那老頭又引了書裡的話……說燉肉跟好書一樣，都得慢慢熬。',
+        '雨果那老頭又引了書裡的話……｜說燉肉跟好書一樣，都得慢慢熬。',
         '熱湯還有，要不要喝一碗？',
         '小寶貝又帶朋友回來了。……多添一份菜。',
         '碼頭的風，比以前冷了。'
@@ -238,7 +238,7 @@
         '這不好笑。',
         '要是被尼科看到……你就完了。',
         '眼鏡……眼鏡要掉了。',
-        '我不需要任何人幫忙——包括把我拎起來。',
+        '我不需要任何人幫忙｜——包括把我拎起來。',
         '你這樣浪費時間，不覺得可惜嗎？',
         '……我還沒算完帳。',
         '……三秒。給你三秒。'
@@ -253,6 +253,27 @@
   var shadow = pet.querySelector('.vlp-shadow');
   var bubble = document.getElementById('vlp-bubble');
   var who = bubble.querySelector('.vlp-who');
+  /* Chinese lines: start the second sentence on a new line (a pause in the speech) instead of
+     letting the bubble wrap a few characters onto a lonely last line */
+  function zhBreak(t) {
+    /* a ｜ in the line file marks exactly where to break */
+    if (t.indexOf('｜') >= 0) return t.replace(/\s*｜\s*$/, '').replace(/\s*｜\s*/g, '\n');   /* a ｜ at the very end means: keep it as one line */
+    var m = /^(.+?[。！？]+[」』）]*)(?=\S)/.exec(t);
+    /* a new beat that opens with …… is the natural pause: break there if it comes early enough */
+    var e = /^(.+?[。！？]+[」』）]*)(?=……)/.exec(t);
+    if (e && e[1].length <= 20) m = e;
+    if (!m) {
+      /* one long sentence: break at the comma nearest the middle instead */
+      if (t.length < 15) return t;
+      var best = -1, mid = t.length / 2;
+      for (var i = 4; i + 4 < t.length; i++) if (t.charAt(i) === '，' && (best < 0 || Math.abs(i - mid) < Math.abs(best - mid))) best = i;
+      return best < 0 ? t : t.slice(0, best + 1) + '\n' + t.slice(best + 1);
+    }
+    if (t.length < 12) return t;
+    var rest = t.slice(m[1].length);
+    if (rest.replace(/[。！？…\s]/g, '').length < 2) return t;
+    return m[1] + '\n' + rest;
+  }
   var say = bubble.querySelector('.vlp-say');
 
   var mode = 'off';
@@ -425,7 +446,7 @@
   function showBubble(text) {
     var c = cur();
     who.textContent = c.en + ' · ' + c.zh;
-    say.textContent = text;
+    say.textContent = zhBreak(text);
     clampBubble();
     bubble.classList.add('vlp-show');
   }
