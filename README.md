@@ -12,12 +12,16 @@ All contents are for use on that site only. Do not download, repost, modify, or 
 
 | 檔案 File | 用途 Used for |
 | --- | --- |
-| `*.webp` | 網站上走動的角色小人圖片 · Walking mascot sprites |
+| `grey_*.webp` 等角色名開頭的圖 | 網站上走動的角色小人圖片 · Walking mascot sprites |
+| `pets_*.webp` | 桌寵介紹的輪播圖 · Desktop pet showcase slides |
+| `rel_*.webp` | 角色關係圖的頭像 · Relationship map portraits |
+| `townsfolk_*.webp` | 城中店主卡片的頭像 · Townsfolk card portraits |
 | `pets.js` | 網站角色小人的程式 · Mascot script |
 | `intro.js` | 開場信箋、導覽影片與主頁效果的程式 · Opening letter, film and home page effects |
 | `intro.mp4` | 維倫導覽開場影片 · Opening tour film |
 | `intro-poster.jpg`、`intro-emblem.png` | 開場畫面的背景與徽章 · Opening screen background and emblem |
 | `play/index.html` | 維倫祕密市民・手機網頁版 · Secret Citizens of Verlen, pocket web version |
+| `play/og.jpg` | 手機網頁版的分享預覽圖 · Share preview image for the pocket version |
 | `play/pocket-bgm.mp3` | 手機網頁版背景音樂 · Background music for the pocket version |
 
 ## 音樂與音效來源 Music & Sound Credits
