@@ -53,6 +53,15 @@
 }
 `;
     document.head.appendChild(style);
+
+    if (!window.__vlLock) { window.__vlLock = 1;
+      var lk = document.createElement('style');
+      lk.textContent = 'html,body{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important}img,video{-webkit-user-drag:none!important;-webkit-touch-callout:none!important}input,textarea{-webkit-user-select:text!important;user-select:text!important}';
+      document.head.appendChild(lk);
+      var no = function (e) { var t = e.target; if (t && t.closest && t.closest('input,textarea')) return; e.preventDefault(); };
+      ['contextmenu', 'dragstart', 'copy', 'cut', 'selectstart'].forEach(function (t) { document.addEventListener(t, no, true); });
+      document.addEventListener('keydown', function (e) { var k = (e.key || '').toLowerCase(); if ((e.ctrlKey || e.metaKey) && 'sucap'.indexOf(k) > -1 && k.length === 1) { var t = e.target; if (t && t.closest && t.closest('input,textarea') && k !== 's' && k !== 'u' && k !== 'p') return; e.preventDefault(); } }, true);
+    }
     var holder = document.createElement('div');
     holder.innerHTML = '<div id="vlp-layer"><div id="vlp-pet" role="button" tabindex="0" aria-label="維倫的居民"><div id="vlp-bubble"><span class="vlp-who"></span><span class="vlp-say"></span></div><div class="vlp-flip"><div class="vlp-frames"></div></div><div class="vlp-shadow"></div></div></div>';
     document.body.appendChild(holder.firstChild);
