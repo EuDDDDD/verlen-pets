@@ -372,13 +372,13 @@ var CAST = [["grey","格雷","Grey"],["euduo","語朵","Euduo"],["johnny","約�
   /* ---------- music ---------- */
   var bgmBtn = document.getElementById('bgm');
   var music = new Audio(); music.loop = true; music.volume = 0.5;
-  var musicWant = false, musicLoad = null;
+  var musicWant = false, musicLoad = null, musicReady = false, SILENT = 'data:audio/wav;base64,UklGRkQDAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YSADAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgA==';
   function loadMusic() {
     if (musicLoad) return musicLoad;
     musicLoad = fetch(BGM).then(function (r) { return r.arrayBuffer(); }).then(function (buf) {
       var u = new Uint8Array(buf), n = u.length, o = new Uint8Array(n), K = 'VerlenPocket-2026', k = K.length;
       for (var i = 0; i < n; i++) o[i] = u[n - 1 - i] ^ K.charCodeAt(i % k) ^ ((i * 29) & 255);
-      music.src = URL.createObjectURL(new Blob([o], { type: 'audio/mpeg' }));
+      music.src = URL.createObjectURL(new Blob([o], { type: 'audio/mpeg' })); musicReady = true;
       if (musicWant) { musicWant = false; playMusic(); }
     }).catch(function () {});
     return musicLoad;
@@ -389,7 +389,7 @@ var CAST = [["grey","格雷","Grey"],["euduo","語朵","Euduo"],["johnny","約�
     bgmBtn.classList.toggle('is-playing', on); bgmBtn.classList.toggle('is-muted', !on);
     bgmBtn.setAttribute('aria-label', on ? t('pause') : t('play'));
   }
-  function playMusic() { if (!music.src) { musicWant = true; loadMusic(); return; } var p = music.play(); if (p && p.then) p.then(function () { started = true; setMusic(true); }).catch(function () { setMusic(false); }); }
+  function playMusic() { if (!musicReady) { musicWant = true; try { music.src = SILENT; var q = music.play(); if (q && q.catch) q.catch(function () {}); } catch (e) {} loadMusic(); return; } var p = music.play(); if (p && p.then) p.then(function () { started = true; setMusic(true); }).catch(function () { setMusic(false); }); }
   bgmBtn.addEventListener('click', function (e) {
     e.stopPropagation();
     if (music.paused && !musicWant) { save.music = true; playMusic(); } else { musicWant = false; save.music = false; music.pause(); setMusic(false); }
