@@ -22,7 +22,7 @@ All contents are for use on that site only. Do not download, repost, modify, or 
 | `intro-poster.jpg`、`intro-emblem.png` | 開場畫面的背景與徽章 · Opening screen background and emblem |
 | `play/index.html` | 維倫祕密市民・手機網頁版 · Secret Citizens of Verlen, pocket web version |
 | `play/og.jpg` | 手機網頁版的分享預覽圖 · Share preview image for the pocket version |
-| `play/pocket-bgm.mp3` | 手機網頁版背景音樂 · Background music for the pocket version |
+| `play/pocket-bgm.dat` | 手機網頁版背景音樂（已編碼，僅供網頁播放） · Background music for the pocket version (encoded, for in-page playback only) |
 
 ## 音樂與音效來源 Music & Sound Credits
 
@@ -31,7 +31,7 @@ The following music and sound effects are from Pixabay, used under the Pixabay C
 
 - `intro.mp4`：[Nostalgic](https://pixabay.com/music/nostalgia-nostalgic-590392/)
 - `intro.mp4` 鐘聲 bell：[City Church Clock Strikes 5](https://pixabay.com/sound-effects/city-church-clock-strikes-5-74801/)（經剪輯調整 · edited）
-- `play/pocket-bgm.mp3`：[Piano Background](https://pixabay.com/music/solo-piano-piano-piano-background-590657/) by andriih
+- `play/pocket-bgm.dat`：[Piano Background](https://pixabay.com/music/solo-piano-piano-piano-background-590657/) by andriih
 
 ## 著作權 Copyright
 
