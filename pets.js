@@ -21,13 +21,13 @@
 #vlp-pet.vlp-talk .vlp-a, #vlp-pet.vlp-held .vlp-a, #vlp-pet.vlp-fall .vlp-a, #vlp-pet.vlp-land .vlp-a { opacity: 0; }
 #vlp-pet.vlp-talk .vlp-f, #vlp-pet.vlp-land .vlp-f { opacity: 1; }
 #vlp-pet.vlp-held .vlp-u, #vlp-pet.vlp-fall .vlp-u { opacity: 1; }
-#vlp-pet.vlp-talk .vlp-frames { animation: vlp-hop .28s ease-out; }
+#vlp-pet.vlp-talk .vlp-frames { animation: vlp-hop .5s ease-out; }
 #vlp-pet.vlp-held .vlp-frames { transform-origin: 50% 6%; animation: vlp-struggle .34s ease-in-out infinite; }
 #vlp-pet.vlp-land .vlp-frames { animation: vlp-squash .34s ease-out; }
 @keyframes vlp-bob { 0% { transform: translateY(0) rotate(-1deg); } 25% { transform: translateY(-4%) rotate(0deg); } 50% { transform: translateY(0) rotate(1deg); } 75% { transform: translateY(-4%) rotate(0deg); } 100% { transform: translateY(0) rotate(-1deg); } }
 @keyframes vlp-fa { 0%, 49.99% { opacity: 1; } 50%, 100% { opacity: 0; } }
 @keyframes vlp-fb { 0%, 49.99% { opacity: 0; } 50%, 100% { opacity: 1; } }
-@keyframes vlp-hop { 0% { transform: translateY(0) scale(1, 1); } 40% { transform: translateY(-6%) scale(.97, 1.03); } 100% { transform: translateY(0) scale(1, 1); } }
+@keyframes vlp-hop { 0% { transform: scale(1, 1); } 22% { transform: scale(1.03, .965); } 48% { transform: translateY(-1.2%) scale(.985, 1.02); } 70% { transform: scale(1.007, .993); } 88% { transform: scale(.998, 1.002); } 100% { transform: scale(1, 1); } }
 @keyframes vlp-struggle { 0%, 100% { transform: rotate(-3.5deg); } 50% { transform: rotate(3.5deg); } }
 @keyframes vlp-squash { 0% { transform: scale(1.14, .82); } 55% { transform: scale(.95, 1.06); } 100% { transform: scale(1, 1); } }
 #vlp-pet .vlp-shadow { position: absolute; left: 50%; bottom: -3px; width: 52%; height: 5px; transform: translateX(-50%); border-radius: 50%; background: rgba(0, 0, 0, .45); filter: blur(3px); opacity: .7; pointer-events: none; }
@@ -507,11 +507,12 @@
     clampBubble();
   });
 
+  function vPoke(){try{if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;frames.animate([{transform:'scale(1,1)'},{transform:'scale(1.03,.965)',offset:.22},{transform:'translateY(-1.2%) scale(.985,1.02)',offset:.48},{transform:'scale(1.007,.993)',offset:.7},{transform:'scale(.998,1.002)',offset:.88},{transform:'scale(1,1)'}],{duration:500,easing:'ease-out'});}catch(err){}}
   function release(e) {
     if (!press || e.pointerId !== press.id) { return; }
     var dragged = press.moved;
     press = null;
-    if (!dragged) { speak(); return; }
+    if (!dragged) { vPoke(); speak(); return; }
     vy = 0;
     if (y <= 1) { land(); } else { setMode('fall'); }
   }
