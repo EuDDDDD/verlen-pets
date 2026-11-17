@@ -13,6 +13,7 @@ All contents are for use on that site only. Do not download, repost, modify, or 
 | 檔案 File | 用途 Used for |
 | --- | --- |
 | `grey_*.webp` 等角色名開頭的圖 | 網站上走動的角色小人圖片 · Walking mascot sprites |
+| `scenes/sc_*.webp` | 學院與城區場景的滑動卡片圖 · Academy and district scene cards |
 | `pets_*.webp` | 桌寵介紹的輪播圖 · Desktop pet showcase slides |
 | `rel_*.webp` | 角色關係圖的頭像 · Relationship map portraits |
 | `townsfolk_*.webp` | 城中店主卡片的頭像 · Townsfolk card portraits |
