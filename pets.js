@@ -28,13 +28,19 @@
 @keyframes vlp-fa { 0%, 49.99% { opacity: 1; } 50%, 100% { opacity: 0; } }
 @keyframes vlp-fb { 0%, 49.99% { opacity: 0; } 50%, 100% { opacity: 1; } }
 @keyframes vlp-hop { 0% { transform: scale(1, 1); } 22% { transform: scale(1.03, .965); } 48% { transform: translateY(-1.2%) scale(.985, 1.02); } 70% { transform: scale(1.007, .993); } 88% { transform: scale(.998, 1.002); } 100% { transform: scale(1, 1); } }
-@keyframes vlptup { 0.000% { opacity: 0; } 8.333% { opacity: 0; } 16.667% { opacity: 0; } 25.000% { opacity: 1; } 33.333% { opacity: 0; } 41.667% { opacity: 0; } 50.000% { opacity: 0; } 58.333% { opacity: 0; } 66.667% { opacity: 0; } 75.000% { opacity: 1; } 83.333% { opacity: 0; } 91.667% { opacity: 0; } 100% { opacity: 0; } }
-@keyframes vlptupl1 { 0.000% { opacity: 0; } 8.333% { opacity: 0; } 16.667% { opacity: 1; } 25.000% { opacity: 0; } 33.333% { opacity: 0; } 41.667% { opacity: 0; } 50.000% { opacity: 0; } 58.333% { opacity: 0; } 66.667% { opacity: 0; } 75.000% { opacity: 0; } 83.333% { opacity: 1; } 91.667% { opacity: 0; } 100% { opacity: 0; } }
-@keyframes vlptupl2 { 0.000% { opacity: 0; } 8.333% { opacity: 1; } 16.667% { opacity: 0; } 25.000% { opacity: 0; } 33.333% { opacity: 0; } 41.667% { opacity: 0; } 50.000% { opacity: 0; } 58.333% { opacity: 0; } 66.667% { opacity: 0; } 75.000% { opacity: 0; } 83.333% { opacity: 0; } 91.667% { opacity: 1; } 100% { opacity: 0; } }
-@keyframes vlptupl3 { 0.000% { opacity: 1; } 8.333% { opacity: 0; } 16.667% { opacity: 0; } 25.000% { opacity: 0; } 33.333% { opacity: 0; } 41.667% { opacity: 0; } 50.000% { opacity: 0; } 58.333% { opacity: 0; } 66.667% { opacity: 0; } 75.000% { opacity: 0; } 83.333% { opacity: 0; } 91.667% { opacity: 0; } 100% { opacity: 1; } }
-@keyframes vlptupr1 { 0.000% { opacity: 0; } 8.333% { opacity: 0; } 16.667% { opacity: 0; } 25.000% { opacity: 0; } 33.333% { opacity: 1; } 41.667% { opacity: 0; } 50.000% { opacity: 0; } 58.333% { opacity: 0; } 66.667% { opacity: 1; } 75.000% { opacity: 0; } 83.333% { opacity: 0; } 91.667% { opacity: 0; } 100% { opacity: 0; } }
-@keyframes vlptupr2 { 0.000% { opacity: 0; } 8.333% { opacity: 0; } 16.667% { opacity: 0; } 25.000% { opacity: 0; } 33.333% { opacity: 0; } 41.667% { opacity: 1; } 50.000% { opacity: 0; } 58.333% { opacity: 1; } 66.667% { opacity: 0; } 75.000% { opacity: 0; } 83.333% { opacity: 0; } 91.667% { opacity: 0; } 100% { opacity: 0; } }
-@keyframes vlptupr3 { 0.000% { opacity: 0; } 8.333% { opacity: 0; } 16.667% { opacity: 0; } 25.000% { opacity: 0; } 33.333% { opacity: 0; } 41.667% { opacity: 0; } 50.000% { opacity: 1; } 58.333% { opacity: 0; } 66.667% { opacity: 0; } 75.000% { opacity: 0; } 83.333% { opacity: 0; } 91.667% { opacity: 0; } 100% { opacity: 0; } }
+#vlp-pet .vlp-frames .vlp-upl1 { opacity: .001; }
+#vlp-pet .vlp-frames .vlp-upl2 { opacity: .001; }
+#vlp-pet .vlp-frames .vlp-upl3 { opacity: .001; }
+#vlp-pet .vlp-frames .vlp-upr1 { opacity: .001; }
+#vlp-pet .vlp-frames .vlp-upr2 { opacity: .001; }
+#vlp-pet .vlp-frames .vlp-upr3 { opacity: .001; }
+@keyframes vlptup { 0.000% { opacity: .001; } 8.333% { opacity: .001; } 16.667% { opacity: .001; } 25.000% { opacity: 1; } 33.333% { opacity: .001; } 41.667% { opacity: .001; } 50.000% { opacity: .001; } 58.333% { opacity: .001; } 66.667% { opacity: .001; } 75.000% { opacity: 1; } 83.333% { opacity: .001; } 91.667% { opacity: .001; } 100% { opacity: .001; } }
+@keyframes vlptupl1 { 0.000% { opacity: .001; } 8.333% { opacity: .001; } 16.667% { opacity: 1; } 25.000% { opacity: .001; } 33.333% { opacity: .001; } 41.667% { opacity: .001; } 50.000% { opacity: .001; } 58.333% { opacity: .001; } 66.667% { opacity: .001; } 75.000% { opacity: .001; } 83.333% { opacity: 1; } 91.667% { opacity: .001; } 100% { opacity: .001; } }
+@keyframes vlptupl2 { 0.000% { opacity: .001; } 8.333% { opacity: 1; } 16.667% { opacity: .001; } 25.000% { opacity: .001; } 33.333% { opacity: .001; } 41.667% { opacity: .001; } 50.000% { opacity: .001; } 58.333% { opacity: .001; } 66.667% { opacity: .001; } 75.000% { opacity: .001; } 83.333% { opacity: .001; } 91.667% { opacity: 1; } 100% { opacity: .001; } }
+@keyframes vlptupl3 { 0.000% { opacity: 1; } 8.333% { opacity: .001; } 16.667% { opacity: .001; } 25.000% { opacity: .001; } 33.333% { opacity: .001; } 41.667% { opacity: .001; } 50.000% { opacity: .001; } 58.333% { opacity: .001; } 66.667% { opacity: .001; } 75.000% { opacity: .001; } 83.333% { opacity: .001; } 91.667% { opacity: .001; } 100% { opacity: 1; } }
+@keyframes vlptupr1 { 0.000% { opacity: .001; } 8.333% { opacity: .001; } 16.667% { opacity: .001; } 25.000% { opacity: .001; } 33.333% { opacity: 1; } 41.667% { opacity: .001; } 50.000% { opacity: .001; } 58.333% { opacity: .001; } 66.667% { opacity: 1; } 75.000% { opacity: .001; } 83.333% { opacity: .001; } 91.667% { opacity: .001; } 100% { opacity: .001; } }
+@keyframes vlptupr2 { 0.000% { opacity: .001; } 8.333% { opacity: .001; } 16.667% { opacity: .001; } 25.000% { opacity: .001; } 33.333% { opacity: .001; } 41.667% { opacity: 1; } 50.000% { opacity: .001; } 58.333% { opacity: 1; } 66.667% { opacity: .001; } 75.000% { opacity: .001; } 83.333% { opacity: .001; } 91.667% { opacity: .001; } 100% { opacity: .001; } }
+@keyframes vlptupr3 { 0.000% { opacity: .001; } 8.333% { opacity: .001; } 16.667% { opacity: .001; } 25.000% { opacity: .001; } 33.333% { opacity: .001; } 41.667% { opacity: .001; } 50.000% { opacity: 1; } 58.333% { opacity: .001; } 66.667% { opacity: .001; } 75.000% { opacity: .001; } 83.333% { opacity: .001; } 91.667% { opacity: .001; } 100% { opacity: .001; } }
 #vlp-pet.vlp-held .vlp-u { animation: vlptup .4s step-end infinite; }
 #vlp-pet.vlp-held .vlp-upl1 { animation: vlptupl1 .4s step-end infinite; }
 #vlp-pet.vlp-held .vlp-upl2 { animation: vlptupl2 .4s step-end infinite; }
@@ -549,11 +555,14 @@
   }
   /* wait until the opening letter and film are over */
   function go() {
-    if (document.documentElement.classList.contains('vl-intro-on')) {
-      document.addEventListener('verlen:intro-done', function () { setTimeout(boot, 400); }, { once: true });
-      return;
-    }
-    boot();
+    var R = document.documentElement, t0 = Date.now(), seen = 0;
+    (function wait() {
+      var busy = document.readyState !== 'complete' || R.classList.contains('vl-intro-on') || R.classList.contains('vl-wl') ||
+        (document.body && /\bis-(loading|preload)\b/.test(document.body.className));
+      if (busy && Date.now() - t0 < 20000) { seen = 0; setTimeout(wait, 200); return; }
+      if (++seen < 3) { setTimeout(wait, 200); return; }
+      setTimeout(boot, 500);
+    })();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go); else setTimeout(go, 0);
 })();
