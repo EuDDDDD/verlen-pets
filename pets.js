@@ -64,13 +64,13 @@
 #vlp-bubble.vlp-side-r::after { top: 14px; left: 0; transform: translate(-50%, 0) rotate(135deg); }
 #vlp-bubble.vlp-side-l::after { top: 14px; left: 100%; transform: translate(-50%, 0) rotate(-45deg); }
 #vlp-bubble .vlp-who { display: block; font-family: "Cormorant Garamond", Georgia, serif; font-style: italic; font-weight: 600; font-size: 13px; letter-spacing: .06em; line-height: 17px; color: #8A6A38; margin: 0 0 3px; padding: 0 0 3px; border-bottom: 1px solid #DCC59A; }
-#vlp-bubble .vlp-say { display: block; white-space: pre-line; font-family: "Noto Serif TC", "Songti TC", "PMingLiU", serif; font-weight: 500; font-size: 14px; line-height: 22px; letter-spacing: .02em; }
+#vlp-bubble .vlp-say { display: block; white-space: pre-line; font-family: "Noto Serif TC", "Songti TC", "PMingLiU", serif; font-weight: 500; font-size: 15px; line-height: 24px; letter-spacing: .02em; }
 @media (max-width: 736px) {
   #vlp-pet img { height: 96px; }
   #vlp-bubble { max-width: 200px; padding: 7px 12px 8px; }
   #vlp-bubble .vlp-say { font-size: 13px; }
   #vlp-bubble .vlp-who { font-size: 12px; line-height: 16px; }
-  #vlp-bubble .vlp-say { line-height: 20px; }
+  #vlp-bubble .vlp-say { font-size: 14px; line-height: 22px; }
 }
 @media (prefers-reduced-motion: reduce) {
   #vlp-pet.vlp-walk .vlp-frames, #vlp-pet.vlp-talk .vlp-frames, #vlp-pet.vlp-held .vlp-frames, #vlp-pet.vlp-land .vlp-frames { animation: none; }
