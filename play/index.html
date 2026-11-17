@@ -101,7 +101,7 @@ html[lang=en] #toast { font-size: 12.5px; letter-spacing: .02em; line-height: 1.
 #pet.sit .s { opacity: 1; }
 /* the sitting sprite has empty space above the head, so the bubble comes down to meet it */
 #pet.sit #bubble { bottom: calc(100% - var(--sz) * var(--sit-top, .22)); }
-#pet.talk .frames, #pet.swap .frames { animation: hop .28s ease-out; }
+#pet.talk .frames, #pet.swap .frames { animation: hop .5s ease-out; }
 #pet.held .frames { transform-origin: 50% 6%; animation: struggle .34s ease-in-out infinite; }
 #pet.land .frames { animation: squash .34s ease-out; }
 /* standing still: no scaling animation, so the drawing stays pixel-sharp */
@@ -125,7 +125,7 @@ html[lang=en] #bubble .who { font-size: 18.5px; letter-spacing: .04em; }
 @keyframes bob { 0% { transform: translateY(0) rotate(-1deg); } 25% { transform: translateY(-3%) rotate(0); } 50% { transform: translateY(0) rotate(1deg); } 75% { transform: translateY(-3%) rotate(0); } 100% { transform: translateY(0) rotate(-1deg); } }
 @keyframes fa { 0%, 49.99% { opacity: 1; } 50%, 100% { opacity: 0; } }
 @keyframes fb { 0%, 49.99% { opacity: 0; } 50%, 100% { opacity: 1; } }
-@keyframes hop { 0% { transform: translateY(0) scale(1,1); } 40% { transform: translateY(-4%) scale(.97,1.03); } 100% { transform: none; } }
+@keyframes hop { 0% { transform: scale(1, 1); } 22% { transform: scale(1.03, .965); } 48% { transform: translateY(-1.2%) scale(.985, 1.02); } 70% { transform: scale(1.007, .993); } 88% { transform: scale(.998, 1.002); } 100% { transform: scale(1, 1); } }
 @keyframes struggle { 0%, 100% { transform: rotate(-3.5deg); } 50% { transform: rotate(3.5deg); } }
 @keyframes squash { 0% { transform: scale(1.12,.84); } 55% { transform: scale(.96,1.05); } 100% { transform: none; } }
 @keyframes breathe { 0%, 100% { transform: scale(1,1); } 50% { transform: scale(1.01,.985); } }
@@ -610,10 +610,11 @@ var CAST = [["grey","格雷","Grey"],["euduo","語朵","Euduo"],["johnny","約�
     y = Math.max(0, Math.min(Math.max(0, groundTop + H() * .3), groundTop - (e.clientY - sr.top - press.offY)));
     clampBubble();
   });
+  function vPoke(){try{if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;frames.animate([{transform:'scale(1,1)'},{transform:'scale(1.03,.965)',offset:.22},{transform:'translateY(-1.2%) scale(.985,1.02)',offset:.48},{transform:'scale(1.007,.993)',offset:.7},{transform:'scale(.998,1.002)',offset:.88},{transform:'scale(1,1)'}],{duration:500,easing:'ease-out'});}catch(err){}}
   function release(e) {
     if (!press || e.pointerId !== press.id) return;
     var dragged = press.moved; press = null;
-    if (!dragged) { lastTouch = now(); speak(); onClickFeel(); return; }
+    if (!dragged) { vPoke(); lastTouch = now(); speak(); onClickFeel(); return; }
     hideBubble(); vy = 0;
     if (y <= 1) land(); else setMode('fall');
   }
