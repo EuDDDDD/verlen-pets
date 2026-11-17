@@ -54,19 +54,23 @@
 #vlp-bubble { --vlp-shift: 0px; position: absolute; bottom: calc(100% + 12px); left: 50%; width: max-content; max-width: 250px; padding: 9px 15px 10px; background: radial-gradient(130% 120% at 30% 20%, #FBF4E4 0%, #EFE2C6 100%); color: #3A2C1A; border: 1px solid #B8955A; border-radius: 3px; box-shadow: inset 0 0 0 3px #F6ECD7, inset 0 0 0 4px #D5BA8A, 0 4px 14px rgba(0, 0, 0, .5); text-align: left; transform: translateX(calc(-50% + var(--vlp-shift))) translateY(6px); opacity: 0; pointer-events: none; transition: opacity .3s ease, transform .3s ease; z-index: 2; }
 #vlp-bubble.vlp-show { opacity: 1; transform: translateX(calc(-50% + var(--vlp-shift))) translateY(0); }
 #vlp-bubble::after { content: ""; position: absolute; top: 100%; left: calc(50% - var(--vlp-shift)); width: 11px; height: 11px; background: #EFE2C6; border-right: 1px solid #B8955A; border-bottom: 1px solid #B8955A; transform: translate(-50%, -6px) rotate(45deg); }
+#vlp-bubble:not(.vlp-side-r):not(.vlp-side-l) { left: var(--vlp-left, 50%); transform: translateY(6px); }
+#vlp-bubble.vlp-show:not(.vlp-side-r):not(.vlp-side-l) { transform: translateY(0); }
+#vlp-bubble:not(.vlp-side-r):not(.vlp-side-l)::after { left: var(--vlp-arrow, 50%); }
 #vlp-bubble.vlp-side-r, #vlp-bubble.vlp-side-l { bottom: auto; top: 2%; transform: translateY(6px); }
 #vlp-bubble.vlp-side-r { left: calc(100% + 12px); }
 #vlp-bubble.vlp-side-l { left: auto; right: calc(100% + 12px); }
 #vlp-bubble.vlp-side-r.vlp-show, #vlp-bubble.vlp-side-l.vlp-show { transform: none; }
 #vlp-bubble.vlp-side-r::after { top: 14px; left: 0; transform: translate(-50%, 0) rotate(135deg); }
 #vlp-bubble.vlp-side-l::after { top: 14px; left: 100%; transform: translate(-50%, 0) rotate(-45deg); }
-#vlp-bubble .vlp-who { display: block; font-family: "Cormorant Garamond", Georgia, serif; font-style: italic; font-weight: 600; font-size: 13px; letter-spacing: .06em; line-height: 1.3; color: #8A6A38; margin: 0 0 3px; padding: 0 0 3px; border-bottom: 1px solid #DCC59A; }
-#vlp-bubble .vlp-say { display: block; white-space: pre-line; font-family: "Noto Serif TC", "Songti TC", "PMingLiU", serif; font-weight: 500; font-size: 14px; line-height: 1.55; letter-spacing: .02em; }
+#vlp-bubble .vlp-who { display: block; font-family: "Cormorant Garamond", Georgia, serif; font-style: italic; font-weight: 600; font-size: 13px; letter-spacing: .06em; line-height: 17px; color: #8A6A38; margin: 0 0 3px; padding: 0 0 3px; border-bottom: 1px solid #DCC59A; }
+#vlp-bubble .vlp-say { display: block; white-space: pre-line; font-family: "Noto Serif TC", "Songti TC", "PMingLiU", serif; font-weight: 500; font-size: 14px; line-height: 22px; letter-spacing: .02em; }
 @media (max-width: 736px) {
   #vlp-pet img { height: 96px; }
   #vlp-bubble { max-width: 200px; padding: 7px 12px 8px; }
   #vlp-bubble .vlp-say { font-size: 13px; }
-  #vlp-bubble .vlp-who { font-size: 12px; }
+  #vlp-bubble .vlp-who { font-size: 12px; line-height: 16px; }
+  #vlp-bubble .vlp-say { line-height: 20px; }
 }
 @media (prefers-reduced-motion: reduce) {
   #vlp-pet.vlp-walk .vlp-frames, #vlp-pet.vlp-talk .vlp-frames, #vlp-pet.vlp-held .vlp-frames, #vlp-pet.vlp-land .vlp-frames { animation: none; }
@@ -350,7 +354,7 @@
     x = walkX();
     var a = walk.anim;
     walk = null;
-    pet.style.transform = 'translate(' + x.toFixed(1) + 'px,' + (-y).toFixed(1) + 'px)';
+    pet.style.transform = 'translate(' + Math.round(x) + 'px,' + Math.round(-y) + 'px)';
     a.cancel();
   }
 
@@ -396,7 +400,7 @@
 
   function place() {
     if (walk) { return; }
-    pet.style.transform = 'translate(' + x.toFixed(1) + 'px,' + (-y).toFixed(1) + 'px)';
+    pet.style.transform = 'translate(' + Math.round(x) + 'px,' + Math.round(-y) + 'px)';
     var flipX = mode === 'walk' && dir === -1;
     flip.style.transform = 'rotate(' + ang.toFixed(2) + 'deg) scaleX(' + (flipX ? -1 : 1) + ')';
     var s = Math.max(0.35, 1 - Math.max(0, y) / 260);
@@ -457,8 +461,10 @@
   }
 
   function clampBubble() {
-    bubble.style.setProperty('--vlp-shift', '0px');
     bubble.classList.remove('vlp-side-r', 'vlp-side-l');
+    var pw = pet.offsetWidth, bw = bubble.offsetWidth;
+    var L = Math.round((pw - bw) / 2);
+    bubble.style.setProperty('--vlp-left', L + 'px');
     var b = bubble.getBoundingClientRect();
     var m = pet.getBoundingClientRect();
     if (m.top < b.height + 22) {
@@ -468,9 +474,11 @@
     var shift = 0, pad = 8;
     if (b.left < pad) { shift = pad - b.left; }
     if (b.right > VW() - pad) { shift = VW() - pad - b.right; }
-    var limit = b.width / 2 - 16;
+    var limit = bw / 2 - 16;
     shift = Math.max(-limit, Math.min(limit, shift));
-    bubble.style.setProperty('--vlp-shift', shift + 'px');
+    L = Math.round(L + shift);
+    bubble.style.setProperty('--vlp-left', L + 'px');
+    bubble.style.setProperty('--vlp-arrow', Math.round(pw / 2 - L) + 'px');
   }
 
   function showBubble(text) {
