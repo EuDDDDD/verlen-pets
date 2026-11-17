@@ -15,7 +15,7 @@
 #vlp-pet .vlp-frames { position: relative; transform-origin: 50% 100%; }
 #vlp-pet img { display: block; height: 130px; width: auto; user-select: none; -webkit-user-select: none; -webkit-user-drag: none; pointer-events: none; }
 #vlp-pet img + img { position: absolute; left: 0; top: 0; opacity: 0; }
-#vlp-pet.vlp-walk .vlp-frames { animation: vlp-bob .62s ease-in-out infinite; }
+#vlp-pet.vlp-walk .vlp-frames { animation: vlp-bob .62s step-end infinite; }
 #vlp-pet.vlp-walk .vlp-a { animation: vlp-fa .62s infinite; }
 #vlp-pet.vlp-walk .vlp-b { animation: vlp-fb .62s infinite; }
 #vlp-pet.vlp-talk .vlp-a, #vlp-pet.vlp-held .vlp-a, #vlp-pet.vlp-fall .vlp-a, #vlp-pet.vlp-land .vlp-a { opacity: 0; }
@@ -24,7 +24,7 @@
 #vlp-pet.vlp-talk .vlp-frames { animation: vlp-hop .5s ease-out; }
 #vlp-pet.vlp-held .vlp-frames { transform-origin: 50% 6%; animation: none; }
 #vlp-pet.vlp-land .vlp-frames { animation: vlp-squash .34s ease-out; }
-@keyframes vlp-bob { 0% { transform: translateY(0) rotate(-1deg); } 25% { transform: translateY(-4%) rotate(0deg); } 50% { transform: translateY(0) rotate(1deg); } 75% { transform: translateY(-4%) rotate(0deg); } 100% { transform: translateY(0) rotate(-1deg); } }
+@keyframes vlp-bob { 0% { transform: translateY(-2px); } 50% { transform: translateY(0); } 100% { transform: translateY(0); } }
 @keyframes vlp-fa { 0%, 49.99% { opacity: 1; } 50%, 100% { opacity: 0; } }
 @keyframes vlp-fb { 0%, 49.99% { opacity: 0; } 50%, 100% { opacity: 1; } }
 @keyframes vlp-hop { 0% { transform: scale(1, 1); } 22% { transform: scale(1.03, .965); } 48% { transform: translateY(-1.2%) scale(.985, 1.02); } 70% { transform: scale(1.007, .993); } 88% { transform: scale(.998, 1.002); } 100% { transform: scale(1, 1); } }
