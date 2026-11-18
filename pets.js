@@ -16,8 +16,8 @@
 #vlp-pet img { display: block; height: 130px; width: auto; user-select: none; -webkit-user-select: none; -webkit-user-drag: none; pointer-events: none; }
 #vlp-pet img + img { position: absolute; left: 0; top: 0; opacity: 0; }
 #vlp-pet.vlp-walk .vlp-frames { animation: vlp-bob .62s step-end infinite; }
-#vlp-pet.vlp-walk .vlp-a { animation: vlp-fa .62s infinite; }
-#vlp-pet.vlp-walk .vlp-b { animation: vlp-fb .62s infinite; }
+#vlp-pet.vlp-walk .vlp-a { animation: vlp-fa .62s step-end infinite; }
+#vlp-pet.vlp-walk .vlp-b { animation: vlp-fb .62s step-end infinite; }
 #vlp-pet.vlp-talk .vlp-a, #vlp-pet.vlp-held .vlp-a, #vlp-pet.vlp-fall .vlp-a, #vlp-pet.vlp-land .vlp-a { opacity: 0; }
 #vlp-pet.vlp-talk .vlp-f, #vlp-pet.vlp-land .vlp-f { opacity: 1; }
 #vlp-pet.vlp-held .vlp-u, #vlp-pet.vlp-fall .vlp-u { opacity: 1; }
