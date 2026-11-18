@@ -93,8 +93,8 @@ html[lang=en] #toast { font-size: 12.5px; letter-spacing: .02em; line-height: 1.
 .frames img { display: block; height: var(--sz); width: auto; pointer-events: none; -webkit-user-drag: none; }
 .frames img + img { position: absolute; left: 0; top: 0; opacity: 0; }
 #pet.walk .frames { animation: bob .62s step-end infinite; }
-#pet.walk .a { animation: fa .62s infinite; }
-#pet.walk .b { animation: fb .62s infinite; }
+#pet.walk .a { animation: fa .62s step-end infinite; }
+#pet.walk .b { animation: fb .62s step-end infinite; }
 #pet.idle .a, #pet.talk .a, #pet.held .a, #pet.fall .a, #pet.land .a, #pet.sit .a { opacity: 0; }
 #pet.idle .f, #pet.talk .f, #pet.land .f { opacity: 1; }
 #pet.held .u, #pet.fall .u { opacity: 1; }
